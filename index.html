@@ -1,0 +1,1592 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SES – økonomisk model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EBEEF2; --card:#FFFFFF; --ink:#16233D; --muted:#5A6B85; --faint:#8A97AC;
+  --line:#DCE2EA; --line2:#EEF1F5; --value:#137A63; --value-soft:#E2F0EB;
+  --kom:#2D6A9F; --reg:#5BA3B8; --stat:#1F3D6B; --arb:#C99700; --priv:#137A63;
+  --warn:#9A5B00; --warn-bg:#FBF1DF;
+  --disp:'Space Grotesk',system-ui,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono','SFMono-Regular',Consolas,monospace;
+  --r:14px; --r-sm:10px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  background-image:radial-gradient(circle at 12% -10%,rgba(45,106,159,.06),transparent 40%),radial-gradient(circle at 100% 0%,rgba(19,122,99,.05),transparent 35%);}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+h1,h2,h3{font-family:var(--disp);font-weight:600;letter-spacing:-.01em;margin:0}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+/* Header */
+header{padding:34px 0 22px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--value);font-weight:700}
+header h1{font-size:clamp(28px,4.4vw,44px);font-weight:700;line-height:1.04;margin:10px 0 12px;max-width:18ch}
+header p{color:var(--muted);max-width:62ch;margin:0;font-size:16px}
+.topbar{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.btn-reset{font-family:var(--mono);font-size:12px;letter-spacing:.04em;background:var(--card);border:1px solid var(--line);color:var(--muted);
+  padding:9px 14px;border-radius:999px;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn-reset:hover{border-color:var(--ink);color:var(--ink)}
+
+/* Layout */
+.grid{display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start;padding-bottom:24px}
+@media(max-width:880px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.sidebar{position:sticky;top:16px;display:flex;flex-direction:column;gap:16px}
+@media(max-width:880px){.sidebar{position:static}}
+.results{display:flex;flex-direction:column;gap:18px}
+
+/* Control groups */
+.group + .group{margin-top:22px;padding-top:20px;border-top:1px solid var(--line2)}
+.group-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+.field{margin-bottom:13px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
+.field input[type=number]{width:100%;font-family:var(--mono);font-size:15px;padding:9px 11px;border:1px solid var(--line);
+  border-radius:var(--r-sm);background:#FBFCFD;color:var(--ink);font-variant-numeric:tabular-nums}
+.field input:focus{outline:2px solid var(--value);outline-offset:1px;border-color:var(--value)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Layer toggles */
+.layer-toggle{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;background:#FBFCFD;border:1px solid var(--line);
+  border-radius:var(--r-sm);padding:12px 13px;cursor:pointer;transition:.15s;margin-bottom:10px}
+.layer-toggle:last-child{margin-bottom:0}
+.layer-toggle:hover{border-color:var(--value)}
+.layer-toggle[aria-pressed=true]{border-color:var(--value);background:var(--value-soft)}
+.layer-toggle:focus-visible{outline:2px solid var(--value);outline-offset:2px}
+.switch{flex:0 0 38px;height:22px;border-radius:999px;background:#C8D1DD;position:relative;margin-top:2px;transition:.18s}
+.layer-toggle[aria-pressed=true] .switch{background:var(--value)}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.18s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.layer-toggle[aria-pressed=true] .switch::after{left:18px}
+.layer-toggle .lt-body strong{display:block;font-size:14px;font-family:var(--disp);font-weight:600}
+.layer-toggle .lt-body span{font-size:12px;color:var(--muted);line-height:1.35;display:block;margin-top:2px}
+
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#FBFCFD}
+.seg button{font-family:var(--mono);font-size:12px;border:0;background:transparent;color:var(--muted);padding:7px 14px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+.seg button:focus-visible{outline:2px solid var(--value);outline-offset:-2px}
+
+details.adv{border-top:1px solid var(--line2);margin-top:22px;padding-top:8px}
+details.adv summary{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);cursor:pointer;padding:8px 0;list-style:none}
+details.adv summary::-webkit-details-marker{display:none}
+details.adv summary::before{content:"+ ";color:var(--value)}
+details.adv[open] summary::before{content:"– "}
+.slider-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.slider-row label{flex:0 0 96px;font-size:12px;color:var(--muted)}
+.slider-row input[type=range]{flex:1;accent-color:var(--value)}
+.slider-row .val{flex:0 0 42px;text-align:right;font-family:var(--mono);font-size:12px}
+
+/* Headline */
+.headline{background:linear-gradient(180deg,#16233D,#1F3357);color:#fff;border:0;border-radius:var(--r);padding:26px 26px 22px;position:relative;overflow:hidden}
+.headline .eyebrow{color:#8FE3CC}
+.headline .big{font-family:var(--mono);font-weight:700;font-size:clamp(34px,6vw,56px);letter-spacing:-.02em;line-height:1;margin:10px 0 4px}
+.headline .sub{color:#B9C6DD;font-size:14px}
+.headline .pp{display:flex;gap:26px;margin-top:18px;flex-wrap:wrap}
+.headline .pp div{font-size:13px;color:#B9C6DD}
+.headline .pp b{display:block;font-family:var(--mono);font-size:21px;color:#fff;font-weight:700;margin-top:2px}
+.headline .layers-on{position:absolute;top:20px;right:24px;font-family:var(--mono);font-size:11px;color:#8FE3CC;letter-spacing:.05em}
+
+.card-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+.card-h h2{font-size:18px}
+.card-h .hint{font-size:12px;color:var(--faint)}
+
+/* Ladder */
+.ladder-row{margin-bottom:18px}
+.ladder-row:last-child{margin-bottom:0}
+.ladder-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.ladder-head .who{font-family:var(--disp);font-weight:600;font-size:15px}
+.ladder-head .tot{font-family:var(--mono);font-weight:700;font-size:15px}
+.bar{display:flex;height:30px;border-radius:7px;overflow:hidden;background:var(--line2)}
+.bar span{display:block;height:100%;transition:width .35s ease}
+.s1{background:var(--ink)} .s2{background:#6E83A6} .s3{background:var(--value)}
+.ladder-legend{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.ladder-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* Actor bar + table */
+.actorbar{display:flex;height:26px;border-radius:7px;overflow:hidden;margin-bottom:4px;background:var(--line2)}
+.actorbar span{height:100%;transition:width .35s ease}
+.split-note{font-size:12px;color:var(--muted);margin:8px 0 16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.split-note b{font-family:var(--mono);color:var(--ink)}
+table.actors{width:100%;border-collapse:collapse;font-size:14px}
+table.actors th,table.actors td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--line2)}
+table.actors th:first-child,table.actors td:first-child{text-align:left}
+table.actors th{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);font-weight:600}
+table.actors td.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+table.actors .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:0}
+table.actors tr.total td{font-weight:700;border-top:1.5px solid var(--ink);border-bottom:0;padding-top:10px}
+
+/* layer cards */
+.layercards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:560px){.layercards{grid-template-columns:1fr}}
+.lc{border:1px solid var(--line);border-radius:var(--r-sm);padding:14px}
+.lc.active{border-color:var(--value);background:var(--value-soft)}
+.lc .lab{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.lc .v{font-family:var(--mono);font-weight:700;font-size:20px;margin-top:6px}
+.lc .d{font-size:12px;color:var(--muted);margin-top:4px}
+
+.note{background:var(--warn-bg);border:1px solid #EBD9B5;border-radius:var(--r-sm);padding:13px 15px;font-size:13px;color:var(--warn);margin-top:2px}
+.note b{font-weight:600}
+.foot{color:var(--faint);font-size:12px;line-height:1.5;margin-top:6px}
+
+/* Evidence layer */
+.legend-help{margin-top:16px}
+.legend-help summary{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;letter-spacing:.03em;background:var(--card);border:1px solid var(--line);color:var(--muted);padding:8px 15px;border-radius:999px;cursor:pointer;list-style:none}
+.legend-help summary::-webkit-details-marker{display:none}
+.legend-help summary::before{content:"?";display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--value);color:#fff;font-weight:700;font-size:11px}
+.legend-help summary:hover{border-color:var(--ink);color:var(--ink)}
+.legend-help[open] summary{border-color:var(--value);color:var(--value)}
+.legend-box{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:18px 20px;margin-top:12px;max-width:74ch}
+.legend-box .lh{font-family:var(--disp);font-weight:600;font-size:14px;color:var(--ink);margin-bottom:6px}
+.legend-box .lp{font-size:13px;color:var(--muted);margin:0 0 14px}
+.legend-box dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:10px 16px;align-items:start}
+.legend-box dt{white-space:nowrap}
+.legend-box dd{margin:0;color:var(--muted);font-size:13px}
+.evidence{padding:6px 0 4px}
+.ev-intro{max-width:66ch;margin-bottom:20px}
+.ev-intro h2{font-size:clamp(22px,3vw,32px);margin:8px 0 8px}
+.ev-intro p{color:var(--muted);margin:0}
+.ev-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:28px}
+@media(max-width:880px){.ev-grid{grid-template-columns:1fr}}
+.ev-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;border-top:4px solid var(--stat)}
+.ev-card.nxt{border-top-color:var(--value)}
+.ev-card h3{font-size:19px}
+.ev-basis{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--faint);text-transform:uppercase;margin:5px 0 0}
+.ev-sub{color:var(--muted);font-size:14px;margin:9px 0 10px}
+.ev-legend{font-family:var(--mono);font-size:10px;color:var(--faint);margin-bottom:4px;padding-bottom:8px;border-bottom:1px solid var(--line2)}
+.domain{padding:13px 0;border-top:1px solid var(--line2)}
+.domain:first-of-type{border-top:0}
+.domain-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:11px}
+.domain-h .dn{font-family:var(--disp);font-weight:600;font-size:14px}
+.etag{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.etag.strong{background:var(--value-soft);color:var(--value)}
+.etag.ok{background:#E5EAF1;color:var(--stat)}
+.etag.soft{background:#EEF1F5;color:var(--muted)}
+.etag.mix{background:var(--warn-bg);color:var(--warn)}
+.eff{margin-bottom:12px}
+.eff:last-child{margin-bottom:0}
+.eff .el{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:4px;line-height:1.3}
+.eff .el .dv{font-family:var(--mono);font-weight:700;color:var(--ink);font-size:12px;white-space:nowrap}
+.dscale{position:relative;height:7px;background:var(--line2);border-radius:4px}
+.dscale .fill{position:absolute;left:0;top:0;height:100%;border-radius:4px}
+.dscale .tick{position:absolute;top:-2px;width:1px;height:11px;background:#C2CCD9}
+.chip{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:999px;background:#EEF1F5;color:var(--muted)}
+.chip.trend{background:var(--warn-bg);color:var(--warn)}
+.bridge{background:linear-gradient(180deg,#16233D,#1F3357);color:#fff;border-radius:var(--r);padding:22px 24px;margin-bottom:24px}
+.bridge .eyebrow{color:#8FE3CC}
+.bridge h2{font-size:20px;margin:8px 0 8px;color:#fff}
+.bridge p{color:#B9C6DD;margin:0;max-width:72ch;font-size:14px}
+/* Who-benefits bridge */
+.whobenefit{margin-bottom:8px}
+.whomatrix{width:100%;border-collapse:collapse;font-size:13px}
+.whomatrix th,.whomatrix td{padding:9px 6px;border-bottom:1px solid var(--line2);text-align:center}
+.whomatrix th:first-child,.whomatrix td:first-child{text-align:left;padding-left:2px}
+.whomatrix thead th{font-family:var(--mono);font-size:10px;letter-spacing:.03em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.whomatrix .grp td{font-family:var(--mono);font-weight:600;font-size:10px;color:var(--muted);background:var(--line2);text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:6px 8px}
+.dotp{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px}
+.dota{display:inline-block;width:12px;height:12px;border-radius:50%;border:1.5px solid #AEBAC9;background:transparent;vertical-align:-1px}
+.who-legend{font-size:12px;color:var(--muted);margin-top:14px;display:flex;gap:20px;flex-wrap:wrap}
+.dots{display:inline-block;width:12px;height:12px;border-radius:50%;border:1.5px solid #C99700;background:linear-gradient(90deg,#C99700 50%,transparent 50%);vertical-align:-1px}
+.appx{width:100%;border-collapse:collapse;font-size:12px;margin-top:14px}
+.appx th,.appx td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line2);vertical-align:top}
+.appx th{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--faint)}
+.appx .grp td{font-family:var(--mono);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--line2)}
+.cca-sec{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line2)}
+.cca-sec:first-child{margin-top:0}
+.cca-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 0;font-size:14px}
+.cca-row .cl{display:flex;align-items:center;gap:9px;color:var(--ink)}
+.cca-row .cv{font-family:var(--mono);font-weight:600;white-space:nowrap}
+.cca-row.off{opacity:.5}
+.cca-row.sumrow{border-top:1.5px solid var(--ink);margin-top:4px;padding-top:11px;font-weight:700}
+.cca-row.sumrow .cv{font-size:17px}
+.trk{display:inline-block;width:11px;height:11px;border-radius:3px;flex:0 0 auto}
+.trk.b{background:#1F3D6B}.trk.p{background:#C99700}.trk.q{background:#137A63}.trk.w{background:#9DB0C7}
+.mini{font-family:var(--mono);font-size:10px;color:var(--faint);background:var(--line2);padding:1px 6px;border-radius:999px;font-weight:400}
+.cca-row .ov{font-family:var(--body);font-weight:400;font-size:11px;color:var(--warn)}
+.field select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font:inherit;background:#fff;color:var(--ink);cursor:pointer}
+.field select:focus{outline:none;border-color:var(--value)}
+.tlegend{display:flex;gap:20px;justify-content:center;margin-top:9px;font-size:11px;color:var(--muted)}
+.tlegend i{display:inline-block;width:16px;height:0;border-top:2.5px solid var(--value);margin-right:6px;vertical-align:middle}
+.tlegend i.d{border-top:1.8px dashed var(--ink)}
+.hz .npv{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px}
+/* ---- metodevælger ---- */
+.picker-intro{font-size:15px;color:var(--ink);margin:0 0 16px;max-width:62ch;line-height:1.55}
+.mcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:12px}
+.mcard{text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:15px 15px 13px;cursor:pointer;font:inherit;color:var(--ink);position:relative;transition:border-color .12s,box-shadow .12s,background .12s;display:flex;flex-direction:column;gap:7px}
+.mcard:hover{border-color:#B9C4D4}
+.mcard.active{border-color:var(--value);background:linear-gradient(180deg,rgba(19,122,99,.05),rgba(19,122,99,.02));box-shadow:0 2px 10px rgba(19,122,99,.10)}
+.mc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.mc-name{font-weight:700;font-size:15px;line-height:1.25}
+.mc-status{font-family:var(--mono);font-size:9px;letter-spacing:.04em;text-transform:uppercase;padding:2px 6px;border-radius:999px;white-space:nowrap;flex:0 0 auto}
+.mc-status.scenarie{background:rgba(91,163,184,.18);color:#2C6A7E}
+.mc-status.antagelse{background:rgba(201,151,0,.16);color:#8A6800}
+.mc-status.fremtidigt{background:#EEF1F5;color:var(--faint)}
+.mc-method{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:-2px}
+.mc-can,.mc-cannot{font-size:11.5px;line-height:1.4}
+.mc-can ul,.mc-cannot ul{margin:3px 0 0;padding-left:15px;color:var(--muted)}
+.mc-can li{color:#0F5C4A}.mc-cannot li{color:var(--faint)}
+.mc-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase}
+.mc-lbl.ok{color:var(--value)}.mc-lbl.no{color:#A23D00}
+.mc-out{font-size:11px;color:var(--ink);background:var(--line2);border-radius:7px;padding:5px 8px}
+.mc-note{font-size:11px;color:var(--muted);line-height:1.42}
+.mc-pick{margin-top:auto;font-family:var(--mono);font-size:11px;font-weight:600;align-self:flex-start;padding:4px 11px;border-radius:999px;border:1px solid var(--line)}
+.mc-pick .mc-pick-on{display:none;color:var(--value)}
+.mcard.active .mc-pick{border-color:var(--value);background:rgba(19,122,99,.10)}
+.mcard.active .mc-pick-on{display:inline}
+.mcard.active .mc-pick-off{display:none}
+/* ---- tom tilstand ---- */
+.empty{text-align:center;padding:26px 16px}
+.empty-h{font-family:var(--mono);font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--faint)}
+.empty-sub{font-size:18px;font-weight:600;color:var(--ink);margin:8px 0 12px}
+.empty-expl{font-size:14px;color:var(--muted);max-width:60ch;margin:0 auto;line-height:1.6}
+/* ---- dækningsmatrix ---- */
+.cov-wrap{overflow-x:auto}
+.cov{width:100%;border-collapse:collapse;font-size:12.5px}
+.cov th,.cov td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.cov thead th{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);font-weight:600;border-bottom:1.5px solid var(--line)}
+.cov tbody td:first-child{color:var(--ink)}
+.st{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.st-i{background:rgba(19,122,99,.13);color:#0F5C4A}
+.st-x{background:#EEF1F5;color:var(--faint)}
+.st-a{background:rgba(201,151,0,.16);color:#8A6800}
+.st-o{background:rgba(201,80,0,.14);color:#A23D00}
+.st-f{background:rgba(31,61,107,.10);color:#3A5278}
+.cov-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:11px;color:var(--muted)}
+.cov-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.cov-legend i.st-i{background:#137A63}.cov-legend i.st-a{background:#C99700}.cov-legend i.st-o{background:#C95000}.cov-legend i.st-x{background:#C5CDD8}.cov-legend i.st-f{background:#5C7099}
+/* ---- overlap & justering ---- */
+.ov-item{border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:10px;background:#FCFDFE}
+.ov-head{display:flex;align-items:center;gap:9px;font-size:14px}
+.ov-badge{font-family:var(--mono);font-size:9px;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px}
+.ov-badge.par{background:rgba(91,163,184,.18);color:#2C6A7E}
+.ov-badge.int{background:rgba(201,151,0,.16);color:#8A6800}
+.ov-badge.ovl{background:rgba(201,80,0,.14);color:#A23D00}
+.ov-why{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.45}
+.ov-sum{font-size:12px;color:var(--ink);margin-top:5px}
+.adj{margin-top:14px;border-top:1px solid var(--line2);padding-top:14px}
+.adj-q{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px}
+.adj-opt{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--ink);padding:6px 0}
+.adj-opt input[type=radio]{accent-color:var(--value)}
+.adj select,.adj input[type=number]{padding:5px 8px;border:1px solid var(--line);border-radius:7px;font:inherit;font-size:12px;color:var(--ink);background:#fff}
+.adj input[type=number]{width:64px}
+/* ---- CCA-tilføjelser ---- */
+.cca-row.sumrow.nosum{border-top-style:dashed}
+.cca-row.sumrow.nosum .cv{font-family:var(--mono);font-size:12px;color:#A23D00;font-weight:600}
+.cca-inline{font-size:12px;color:var(--muted);background:var(--line2);border-radius:8px;padding:8px 11px;margin-top:8px;line-height:1.45}
+.notincl{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.ni-chip{font-size:11.5px;color:var(--faint);background:#EEF1F5;border-radius:999px;padding:4px 11px}
+.scope-intro{font-size:13px;color:var(--muted);background:var(--line2);border-radius:9px;padding:10px 13px;margin:0 0 14px;line-height:1.5}
+.scope-card{border:1px solid var(--line);border-radius:13px;padding:14px 15px;margin-bottom:12px;background:#fff}
+.scope-h{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.scope-h b{font-size:15px}
+.scope-method{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.sc-total{margin-left:auto;font-family:var(--mono);font-weight:700;font-size:14px;color:var(--value)}
+.scope-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.scope-cols{grid-template-columns:1fr}}
+.scope-col{border-radius:10px;padding:11px 12px}
+.scope-in{background:rgba(19,122,99,.05);border:1px solid rgba(19,122,99,.18)}
+.scope-out{background:#F7F8FA;border:1px solid var(--line2)}
+.scope-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:7px}
+.scope-lbl.ok{color:var(--value)}.scope-lbl.no{color:var(--faint)}
+.sc-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+.sc-list li{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12.5px}
+.scope-in .sc-e{color:var(--ink)}.scope-out .sc-e{color:var(--muted)}
+.sc-kr{font-family:var(--mono);font-size:11.5px;color:var(--value);white-space:nowrap}
+.sc-tag{font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:999px;white-space:nowrap}
+.sc-tag.x{background:#EEF1F5;color:var(--faint)}
+.sc-tag.a{background:rgba(201,151,0,.16);color:#8A6800}
+.sc-tag.f{background:rgba(31,61,107,.10);color:#3A5278}
+.sc-tag.adj,.sc-tag.ov{background:rgba(201,80,0,.13);color:#A23D00}
+.sc-none{color:var(--faint);font-size:12px;justify-content:flex-start}
+.userlayer{margin:0 0 26px}
+.ulayer{display:flex;flex-direction:column;gap:22px}
+.ul-group.reserved{opacity:.95}
+.ul-h{display:flex;align-items:center;gap:9px;font-weight:700;font-size:14px;margin-bottom:11px;color:var(--ink)}
+.ul-tag{font-family:var(--mono);font-size:9px;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px}
+.ul-tag.live{background:rgba(19,122,99,.13);color:#0F5C4A}
+.ul-tag.soon{background:#EEF1F5;color:var(--faint)}
+.ul-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:13px}
+.ul-sub{font-size:12px;color:var(--muted);margin:0 0 10px;line-height:1.5;max-width:70ch}
+.ul-flow{display:flex;flex-direction:column}
+.ul-step{position:relative;display:grid;grid-template-columns:34px 1fr;gap:18px;align-items:start;padding-bottom:26px}
+.ul-step:last-child{padding-bottom:0}
+.ul-step:not(:last-child)::before{content:"";position:absolute;left:17px;top:38px;bottom:2px;width:2px;background:var(--line2);transform:translateX(-1px)}
+.ul-step-marker{width:34px;height:34px;border-radius:50%;background:var(--value);color:#fff;font-family:var(--mono);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.ul-step-main{min-width:0;padding-top:4px}
+.ul-step-head{margin-bottom:13px}
+.ul-step-title{font-family:var(--disp);font-weight:700;font-size:16px;color:var(--ink);letter-spacing:-.01em}
+.ul-step-why{font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:3px;max-width:64ch}
+.ul-kom-ctx{font-size:12px;color:var(--muted);line-height:1.5;margin-top:11px;padding:9px 12px;background:var(--value-soft);border-radius:8px}
+.ul-kom-ctx:empty{display:none;padding:0;margin:0}
+.ul-kom-ctx b{color:var(--ink)}
+.ul-future{background:#F7F8FA;border:1px solid var(--line2);border-radius:var(--r);padding:18px}
+.ul-future-head .eyebrow{color:var(--faint)}
+.ul-future-head p{font-size:12.5px;color:var(--muted);margin:6px 0 14px;line-height:1.5;max-width:72ch}
+.ul-future .field label{color:var(--faint)}
+.ul-future-det{margin-top:14px;border:1px solid var(--line2);border-radius:var(--r-sm);background:#fff;overflow:hidden}
+.ul-future-det summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;padding:11px 14px;font-weight:600;font-size:13px;color:var(--muted)}
+.ul-future-det summary::-webkit-details-marker{display:none}
+.ul-future-det .chev{color:var(--faint);transition:transform .2s;font-size:16px}
+.ul-future-det[open] .chev{transform:rotate(90deg)}
+.ul-future-detbody{padding:2px 14px 14px}
+.ul-future-detbody .ul-sub{margin-bottom:10px}
+@media(max-width:560px){.ul-step{grid-template-columns:28px 1fr;gap:13px}.ul-step-marker{width:28px;height:28px;font-size:13px}.ul-step:not(:last-child)::before{left:14px;top:33px}}
+.faggrupper{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:4px 18px}
+.fg-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px;padding:7px 0;border-bottom:1px solid var(--line2)}
+.fg-row label{color:var(--ink)}
+.fg-da{color:var(--faint);font-size:11px}
+.fg-row input{width:84px;padding:5px 8px;border:1px solid var(--line);border-radius:7px;font:inherit;font-size:12px;text-align:right}
+input[disabled]{background:#F1F3F6;color:var(--faint);cursor:not-allowed}
+.persp-presets{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.pp-btn{font:inherit;font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;transition:all .12s}
+.pp-btn:hover{border-color:#B9C4D4}
+.pp-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+.actor-toggles{display:flex;flex-wrap:wrap;gap:10px}
+.at-sw{display:inline-flex;align-items:center;gap:10px;font:inherit;font-size:13px;font-weight:500;padding:8px 15px 8px 11px;border-radius:11px;border:1.5px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;transition:border-color .12s,color .12s}
+.at-sw:hover{border-color:#B9C4D4}
+.at-sw.active{border-color:var(--ac);color:var(--ink)}
+.sw-track{position:relative;width:36px;height:20px;border-radius:999px;background:#CBD3DE;transition:background .15s;flex:0 0 auto}
+.sw-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+.at-sw.active .sw-track{background:var(--ac)}
+.at-sw.active .sw-knob{transform:translateX(16px)}
+.sc-total-hint{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint)}
+.sc-hint{font-family:var(--mono);font-size:10px;color:var(--faint)}
+.seg-sm button{padding:5px 10px;font-size:11.5px}
+.es-seg{display:inline-flex}
+.est-sub,.est-note{font-size:12px;color:var(--muted);line-height:1.5}
+.est-sub{margin-bottom:12px}
+.est-note{margin-top:12px;background:var(--line2);border-radius:8px;padding:9px 12px}
+.est-strats{display:flex;flex-direction:column;gap:2px}
+.est-strat{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--line2)}
+.es-main{flex:1;min-width:0}
+.es-name{font-weight:600;font-size:13px;color:var(--ink)}
+.es-desc{font-size:11.5px;color:var(--muted);line-height:1.4;margin-top:2px}
+.es-ctrl{flex:0 0 auto;display:flex;align-items:center}
+.es-lic{font-family:var(--mono);font-size:9px;text-transform:uppercase;background:rgba(201,151,0,.16);color:#8A6800;padding:1px 6px;border-radius:999px;margin-left:6px}
+.es-num{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:var(--muted)}
+.es-num input{width:74px;padding:5px 8px;border:1px solid var(--line);border-radius:7px;font:inherit;font-size:12px;text-align:right}
+.es-sw{background:none;border:none;padding:0;cursor:pointer}
+.es-sw.active .sw-track{background:var(--value)}
+.es-sw.active .sw-knob{transform:translateX(16px)}
+.est-readout{margin-top:14px}
+.er-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.er-cell{background:#F7F8FA;border:1px solid var(--line2);border-radius:10px;padding:11px 13px}
+.er-cell.hl{background:rgba(19,122,99,.06);border-color:rgba(19,122,99,.2)}
+.er-lbl{font-size:11px;color:var(--muted);line-height:1.3}
+.er-v{font-family:var(--mono);font-weight:700;font-size:18px;color:var(--ink);margin-top:5px}
+.er-cell.hl .er-v{color:var(--value)}
+.est-cfield{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.est-clabel{font-size:12px;font-weight:700;color:var(--ink)}
+.est-tracks{display:flex;flex-direction:column;gap:2px}
+.est-result{margin-top:16px;background:#F7F8FA;border:1px solid var(--line2);border-radius:12px;padding:18px}
+.er-hero{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.er-big{font-family:var(--mono);font-size:46px;font-weight:800;line-height:.92;letter-spacing:-.02em;color:var(--value)}
+.er-unit{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;max-width:12ch;line-height:1.3}
+.er-stats{margin-top:14px;display:flex;gap:24px;flex-wrap:wrap}
+.er-k{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.er-sv{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--ink);margin-top:3px}
+.er-sv.soft{color:var(--muted)}
+.er-ramp{font-size:12px;color:var(--muted);margin-top:14px;border-top:1px dashed var(--line);padding-top:12px;line-height:1.5}
+.er-gauge{margin-top:18px}
+.er-grow{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.er-glab{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.er-gpct{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink)}
+.er-gtrack{height:9px;border-radius:6px;background:#fff;border:1px solid var(--line);overflow:hidden}
+.er-gfill{height:100%;width:0;background:linear-gradient(90deg,var(--reg),var(--value));transition:width .25s}
+.er-gscale{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:6px}
+.er-peers{margin-top:20px}
+.er-plabel{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px}
+.er-peers svg{width:100%;height:auto;display:block;overflow:visible}
+.er-pcap{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.5}
+.er-empty{font-size:13px;color:var(--faint);padding:16px;text-align:center;background:#F7F8FA;border:1px solid var(--line2);border-radius:12px}
+.est-calc{display:block;width:100%;margin-top:16px;font:inherit;font-weight:700;font-size:14px;font-family:var(--disp);color:#fff;background:var(--value);border:none;border-radius:11px;padding:13px 18px;cursor:pointer;letter-spacing:.01em;transition:background .15s,transform .05s}
+.est-calc:hover{background:#0F6953}
+.est-calc:active{transform:translateY(1px)}
+.est-calc:disabled{background:#B7C3CE;cursor:not-allowed}
+.est-calc:focus-visible{outline:2.5px solid var(--value);outline-offset:2px}
+.er-cta-msg{font-size:13px;color:var(--muted);line-height:1.55;background:#F7F8FA;border:1px solid var(--line2);border-radius:12px;padding:16px}
+.er-cta-msg b{color:var(--ink)}
+.er-result-head{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px}
+.er-headline{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.er-hn{background:var(--value-soft);border:1px solid rgba(19,122,99,.22);border-radius:13px;padding:16px 18px}
+.er-hn-lab{font-size:11.5px;font-weight:700;color:#0F5C4A;letter-spacing:.02em}
+.er-hn-num{font-family:var(--mono);font-weight:800;font-size:42px;line-height:1;color:var(--value);margin:8px 0 4px;font-variant-numeric:tabular-nums}
+.er-hn-unit{font-size:11px;color:var(--muted)}
+.er-quick{font-size:12px;color:var(--muted);line-height:1.55;margin-top:14px}
+.er-quick b{color:var(--ink);font-family:var(--mono)}
+.er-more{margin-top:14px;border-top:1px solid var(--line2);padding-top:6px}
+.er-more summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:var(--muted);padding:8px 0}
+.er-more summary::-webkit-details-marker{display:none}
+.er-more .chev{color:var(--faint);font-size:15px;transition:transform .2s}
+.er-more[open] .chev{transform:rotate(90deg)}
+.er-more-body{padding:6px 0 4px}
+@media(max-width:560px){.er-headline{grid-template-columns:1fr}.er-hn-num{font-size:36px}}
+.est-nxt{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding:11px 13px;background:var(--line2);border-radius:9px}
+.est-nxt label{font-size:12px;font-weight:600;color:var(--ink)}
+.est-nxt input{width:74px;padding:5px 8px;border:1px solid var(--line);border-radius:7px;font:inherit;font-size:12px;text-align:right;background:#fff}
+.est-nxt-note{font-size:11px;color:var(--muted);flex:1;min-width:150px;line-height:1.4}
+.cea-license{margin-bottom:16px}
+.cea-lic-head{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:10px}
+.cea-lic-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line2)}
+.cea-lic-row:last-of-type{border-bottom:none}
+.cea-chk{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;flex:0 0 160px}
+.cea-chk input{width:16px;height:16px;accent-color:var(--value);cursor:pointer}
+.cea-always{font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;background:var(--value-soft);color:#0F5C4A;padding:1px 6px;border-radius:999px;font-weight:700}
+.cea-lic-field{flex:1;min-width:0}
+.cea-lic-field input{width:100%;font-family:var(--mono);font-size:14px;padding:8px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+.cea-lic-field input:focus{outline:2px solid var(--value);outline-offset:1px;border-color:var(--value)}
+.cea-lic-field input:disabled{background:#F2F4F7;color:var(--faint);cursor:not-allowed}
+.cea-lic-total{margin-top:12px;font-size:13px;color:var(--ink);font-weight:600}
+.cea-lic-total .num{font-family:var(--mono)}
+.cea-lic-total:empty{display:none}
+.cea-layer{margin:10px 0 30px;border:1px solid var(--line);border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 1px 2px rgba(22,35,61,.04)}
+.cea-top{background:var(--ink);color:#fff;padding:24px 30px 26px}
+.cea-eyebrow{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9FB2D0;margin-bottom:10px}
+.cea-title{font-family:var(--disp);font-weight:700;font-size:24px;letter-spacing:-.02em;color:#fff;margin:0 0 12px}
+.cea-intro{font-size:14px;line-height:1.6;color:#C9D4E6;max-width:80ch;margin:0}
+.cea-intro b{color:#fff}
+.cea-body{padding:30px}
+.cea-disse{margin-top:18px;padding-top:18px;border-top:1px dashed var(--line)}
+.cea-disse-lab{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:7px}
+.cea-disse .cea-lic-field{max-width:280px}
+.cea-disse-rec{font-size:12.5px;color:var(--muted);line-height:1.55;margin:9px 0 0}
+.cea-calc{appearance:none;border:none;background:var(--value);color:#fff;font-family:var(--body);font-weight:600;font-size:14px;padding:12px 22px;border-radius:11px;cursor:pointer;transition:filter .15s}
+.cea-calc:hover{filter:brightness(1.07)}
+.cea-calc:disabled{background:var(--line);color:var(--faint);cursor:not-allowed}
+.cea-calc-hint{font-size:12.5px;color:var(--muted);margin:10px 0 0}
+.cea-tot-split{font-family:var(--body);font-weight:500;font-size:12px;color:var(--muted)}
+.cea-scope{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.cea-scope-lab{font-size:12.5px;color:var(--muted);font-weight:600;margin-right:2px}
+.cea-scope-btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--muted);font-family:var(--body);font-size:12.5px;font-weight:600;padding:6px 13px;border-radius:999px;cursor:pointer;transition:all .12s}
+.cea-scope-btn:hover{border-color:var(--value);color:var(--ink)}
+.cea-scope-btn[aria-pressed="true"]{background:var(--value);border-color:var(--value);color:#fff}
+.cea-bc{font-family:var(--mono);font-weight:700;font-size:13px}
+.cea-bc.pos{color:var(--value)}
+.cea-bc.neg{color:var(--arb)}
+.cea-summary-row{margin-top:16px}
+.cea-sum-btn{appearance:none;border:1px solid var(--value);background:var(--value-soft);color:#0F5C4A;font-family:var(--body);font-weight:600;font-size:13px;padding:9px 16px;border-radius:10px;cursor:pointer;transition:filter .15s}
+.cea-sum-btn:hover{filter:brightness(.98)}
+.cea-summary{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.cea-sum-head{display:flex;align-items:center;justify-content:space-between;background:var(--bg);padding:10px 16px;border-bottom:1px solid var(--line);font-family:var(--disp);font-weight:700;font-size:13px;color:var(--ink)}
+.cea-sum-copy{appearance:none;border:1px solid var(--line);background:#fff;color:var(--muted);font-family:var(--mono);font-size:11px;font-weight:600;padding:4px 11px;border-radius:7px;cursor:pointer}
+.cea-sum-copy:hover{border-color:var(--value);color:var(--value)}
+.cea-sum-text{padding:16px;font-size:13px;line-height:1.6;color:var(--ink);white-space:pre-wrap}
+.postcalc{padding:6px 0 60px}
+.postcalc .panel{margin-bottom:18px}
+@media(max-width:560px){.cea-top{padding:20px}.cea-body{padding:20px}.cea-title{font-size:20px}}
+details.method summary{font-family:var(--disp);font-weight:600;font-size:16px;cursor:pointer;list-style:none}
+details.method summary::-webkit-details-marker{display:none}
+details.method summary::after{content:" ↓";color:var(--value)}
+details.method[open] summary::after{content:" ↑"}
+.eff-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}
+.eff-table th,.eff-table td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line2);vertical-align:top}
+.eff-table th{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint)}
+.tag{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:999px;white-space:nowrap}
+.tag.l1{background:#E5EAF1;color:var(--stat)} .tag.l2{background:#E7EDF4;color:#5A6B85} .tag.l3{background:var(--value-soft);color:var(--value)}
+.note.alt{background:#EEF3F8;border-color:#D5E0EC;color:var(--stat)}
+.horizons{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0 4px}
+@media(max-width:560px){.horizons{grid-template-columns:repeat(2,1fr)}}
+.hz{border:1px solid var(--line);border-radius:var(--r-sm);padding:11px 12px;text-align:left}
+.hz.life{border-color:var(--value);background:var(--value-soft)}
+.hz .h{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--muted);text-transform:uppercase}
+.hz .v{font-family:var(--mono);font-weight:700;font-size:15px;margin-top:5px}
+.tchart{width:100%;height:auto;display:block;overflow:visible}
+.tchart text{font-family:var(--mono);fill:var(--faint);font-size:11px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">SES · økonomisk model</div>
+        <h1>Dokumenteret effekt, omsat til kroner — på tre niveauer</h1>
+        <p>Indtast antal brugere og juster antagelserne. Modellen viser værdien af SES ONE (forældre) og SES NXT (børn) fordelt på kommune, region, stat, arbejdsplads og borger — bygget på SØM v3.4's enhedspriser og de publicerede effektstudier.</p>
+      </div>
+      <button class="btn-reset" id="reset">Nulstil til standard</button>
+    </div>
+  </header>
+
+  <section class="evidence">
+    <div class="ev-intro">
+      <div class="eyebrow">Grundlaget · evidensen</div>
+      <h2>Hvad hjælper SES på?</h2>
+      <p>Alt nedenfor bygger på de tre forskningsprojekter: SES ONE på en 12-måneders RCT og en 5-årig registeropfølgning, SES NXT på en RCT med opfølgning ved 4 og 12 uger. Effektstørrelser (Cohen's d) er vist som søjler; robuste fund og trends er markeret.</p>
+      <details class="legend-help">
+        <summary>Hvad betyder mærkaterne?</summary>
+        <div class="legend-box">
+          <div class="lh">Effektstørrelse (Cohen's d)</div>
+          <p class="lp">Et standardiseret mål for forskellen mellem SES-gruppen og kontrolgruppen. Søjlen er markeret ved 0,2 (lille), 0,5 (medium) og 0,8 (stor effekt).</p>
+          <dl>
+            <dt><span class="etag strong">stor effekt</span></dt><dd>Effektstørrelsen er stor (d ≥ 0,8) — en markant forskel mellem grupperne.</dd>
+            <dt><span class="etag ok">robust</span></dt><dd>Et veldokumenteret, statistisk signifikant fund — stærkt nok til med stor sandsynlighed at være reelt og ikke tilfældigt.</dd>
+            <dt><span class="etag soft">lille effekt</span></dt><dd>Effektstørrelsen er lille (omkring d = 0,2) — en reel, men beskeden forskel.</dd>
+            <dt><span class="etag mix">blandet</span></dt><dd>Domænet rummer både robuste fund og trends.</dd>
+            <dt><span class="chip trend">trend</span></dt><dd>Effekten viser en trend — den peger den rigtige vej — men er ikke stærk nok til at gælde som et statistisk signifikant fund.</dd>
+            <dt><span class="chip">OR / IRR</span></dt><dd>Mål fra registerudfald. Under 1 betyder færre hændelser i SES-gruppen.</dd>
+          </dl>
+        </div>
+      </details>
+    </div>
+    <div class="ev-grid" id="evGrid"></div>
+  </section>
+
+  <section class="whobenefit">
+    <div class="ev-intro">
+      <div class="eyebrow">Broen · hvem har gavn?</div>
+      <h2>Hvem mærker effekterne?</h2>
+      <p>Hver effekt rammer først et menneske — barnet eller forælderen — og forplanter sig derfra til de offentlige kasser og arbejdspladsen. Det er den fordeling, økonomimodellen nedenfor sætter kroner på.</p>
+    </div>
+    <div class="panel">
+      <div id="whoMatrix"></div>
+      <div class="who-legend">
+        <span><span class="dotp" style="background:#137A63"></span> primær gevinst (mennesket selv)</span>
+        <span><span class="dota"></span> afledt / økonomisk gevinst</span>
+        <span><span class="dots"></span> systemeffekt — kræver lokale/registerdata</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="userlayer">
+    <div class="ev-intro">
+      <div class="eyebrow">Hvem og hvor mange</div>
+      <h2>Populations- og adgangslag</h2>
+      <p>Tre trin sætter rammen for beregningen: vælg jeres kommune, fastsæt hvor mange brugere I forventer, og bestem hvis perspektiv værdien skal opgøres fra. Resultatet føder direkte ind i værdimodellen nedenfor.</p>
+    </div>
+    <div class="panel ulayer">
+      <div class="ul-flow">
+
+        <div class="ul-step">
+          <div class="ul-step-marker">1</div>
+          <div class="ul-step-main">
+            <div class="ul-step-head">
+              <div class="ul-step-title">Vælg kommune</div>
+              <div class="ul-step-why">Kommunens størrelse er udgangspunktet for hele beregningen.</div>
+            </div>
+            <div class="ul-grid">
+              <div class="field"><label for="kommune">Kommune</label><select id="kommune"></select></div>
+              <div class="field"><label for="nInhab">Indbyggertal</label><input type="number" id="nInhab" min="0" step="1000" placeholder="fx 60.000"></div>
+            </div>
+            <div class="ul-kom-ctx" id="komContext"></div>
+          </div>
+        </div>
+
+        <div class="ul-step">
+          <div class="ul-step-marker">2</div>
+          <div class="ul-step-main">
+            <div class="ul-step-head">
+              <div class="ul-step-title">Forventede brugere om året</div>
+              <div class="ul-step-why">Hvor mange forældre (ONE) og børn (NXT) der får glæde af SES. Estimér ud fra jeres udbredelsesindsats — eller indtast tal, I selv kender.</div>
+            </div>
+            <div class="seg seg-sm" id="userModeSeg" role="group" aria-label="Brugerinput" style="margin-bottom:14px">
+              <button type="button" id="umEstimate" aria-pressed="true">Estimér ud fra strategi</button>
+              <button type="button" id="umManual" aria-pressed="false">Indtast manuelt</button>
+            </div>
+            <div id="userManual">
+              <div class="ul-grid">
+                <div class="field"><label for="nF">Forældre (SES ONE)</label><input type="number" id="nF" min="0" step="1"></div>
+                <div class="field"><label for="nB">Børn 6-17 (SES NXT)</label><input type="number" id="nB" min="0" step="1"></div>
+              </div>
+            </div>
+            <div id="userEstimate">
+              <div class="est-sub">Datagrundlag: faktiske rater fra <b>107 nordiske kommuner</b> (ONE-oprettelser pr. 100.000 indb./md), behandlet som ét samlet datasæt. Vælg jeres udbredelsesindsats, og tryk Beregn.</div>
+              <div class="est-tracks" id="estTracks"></div>
+              <button type="button" id="estCalc" class="est-calc">Beregn forventede brugere</button>
+              <div class="est-result" id="estResult"></div>
+              <div class="est-nxt"><label for="nxtRatio">NXT-børn 6-17 pr. ONE-bruger</label><input type="number" id="nxtRatio" min="0" max="3" step="0.05"><span class="est-nxt-note">Afledt — <b>ikke</b> datafittet som ONE. Sæt til 0 ved ingen NXT-licens.</span></div>
+              <div class="est-note">Konverteringsspændet rummer også lokale skilsmisserater, ildsjæle og tilfældig variation — tallene er <b>scenarie-skøn, ikke garantier</b>. Når kommunernes faktiske aktiviteter registreres, kan indsatsfaktoren erstattes af fittede koefficienter pr. spor. Beregningsmåden står i antagelsesloggen nederst.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ul-step">
+          <div class="ul-step-marker">3</div>
+          <div class="ul-step-main">
+            <div class="ul-step-head">
+              <div class="ul-step-title">Vælg perspektiv</div>
+              <div class="ul-step-why">Hvilke aktører skal den økonomiske værdi tælles for? Vælg et hurtigvalg eller tænd aktører enkeltvis — ingen er valgt som udgangspunkt, så tag aktivt stilling. Velfærd (WELLBY/QALY) er altid borgerens egen og påvirkes ikke.</div>
+            </div>
+            <div class="persp-presets" id="perspPresets"></div>
+            <div class="actor-toggles" id="actorToggles"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="ul-future">
+        <div class="ul-future-head">
+          <span class="eyebrow">Kommende moduler</span>
+          <p>Felterne her opsamles allerede nu, men indgår endnu ikke i beregningen — de aktiveres, når de tilhørende værdimodeller er klar.</p>
+        </div>
+        <div class="ul-grid">
+          <div class="field"><label for="nMunEmp">Kommunalt ansatte i alt</label><input type="number" id="nMunEmp" min="0" step="100" placeholder="hele kommunen"></div>
+          <div class="field"><label for="nP">Fagpersoner i alt</label><input type="number" id="nP" min="0" step="1" disabled placeholder="afventer model"></div>
+        </div>
+        <details class="ul-future-det">
+          <summary><span>Faggrupper &amp; adgang</span><span class="chev">&rsaquo;</span></summary>
+          <div class="ul-future-detbody">
+            <p class="ul-sub">Antal fagpersoner I ønsker at give adgang — pr. faggruppe (internationale betegnelser, så modellen kan bruges på tværs af lande).</p>
+            <div class="faggrupper" id="faggrupper"></div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <div class="bridge">
+    <div class="eyebrow">Fra effekt til kroner</div>
+    <h2>Hvad er det værd?</h2>
+    <p>Modellen nedenfor sætter kroner på effekterne ovenfor — men kun gennem den eller de beregningsmetoder, du vælger. Hver metode viser tydeligt, hvilke effekter den kan værdisætte, og hvilke der falder uden for. Vælg derfor metode bevidst: et rent budgetperspektiv fanger fx ikke de store mentale og livskvalitetseffekter.</p>
+  </div>
+
+  <div class="grid">
+    <!-- CONTROLS -->
+    <aside class="sidebar">
+      <div class="panel">
+        <div class="group">
+          <div class="group-title">Skolefravær (SØM)</div>
+          <div class="field">
+            <label>Værdi pr. barn der kommer ud af bekymrende fravær (10 år)</label>
+            <div class="seg" role="group" aria-label="Skolefraværsværdi">
+              <button id="sNetto" aria-pressed="true">Netto 41.600 (base)</button>
+              <button id="sBrutto" aria-pressed="false">Brutto 75.000 (scenarie)</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-title">Diskontering</div>
+          <div class="field"><label for="disc">Diskonteringsrente (% pr. år)</label><input type="number" id="disc" step="0.1" min="0" max="20"></div>
+        </div>
+
+        <details class="adv">
+          <summary>Avancerede antagelser</summary>
+          <div class="field"><label for="prod">Produktionsværdi pr. arbejdsdag (kr.)</label><input type="number" id="prod" step="50"></div>
+          <div class="field"><label for="tax">Effektiv skatte-/overførselssats</label><input type="number" id="tax" step="0.01" min="0" max="1"></div>
+          <div class="field"><label for="income">Indkomstgevinst pr. forælder, 5 år (kr.)</label><input type="number" id="income" step="1000"></div>
+          <div class="field"><label for="share">Andel NXT-børn ud af bekymrende fravær</label><input type="number" id="share" step="0.01" min="0" max="1"></div>
+          <div class="field"><label for="qaly">QALY-værdi (kr.)</label><input type="number" id="qaly" step="10000"></div>
+          <div class="two">
+            <div class="field"><label for="ag">QALY-gevinst voksen/år</label><input type="number" id="ag" step="0.01"></div>
+            <div class="field"><label for="cg">QALY-gevinst barn/år</label><input type="number" id="cg" step="0.01"></div>
+          </div>
+          <div class="field"><label for="yrs">Varighed af velfærdsgevinst (år)</label><input type="number" id="yrs" step="1" min="1"></div>
+          <div class="group-title" style="margin-top:14px">WELLBY-scenarie</div>
+          <div class="two">
+            <div class="field"><label for="wbAdult">Livstilfredshed-point voksen</label><input type="number" id="wbAdult" step="0.1" min="0"></div>
+            <div class="field"><label for="wbChild">Livstilfredshed-point barn</label><input type="number" id="wbChild" step="0.1" min="0"></div>
+          </div>
+          <div class="field"><label for="wbValue">WELLBY-værdi pr. point-år (kr.)</label><input type="number" id="wbValue" step="5000"></div>
+          <div class="field"><label for="wbHaircut">WELLBY-haircut</label><input type="number" id="wbHaircut" step="0.05" min="0" max="1"></div>
+        </details>
+
+      </div>
+    </aside>
+
+    <!-- RESULTS -->
+    <main class="results">
+      <div class="panel">
+        <div class="card-h"><h2>Vælg metode(r)</h2><span class="hint">CCA · ingen default-beregning</span></div>
+        <p class="picker-intro">Vælg en eller flere metoder for at se, hvilke dele af SES Familys dokumenterede effektgrundlag de kan belyse.</p>
+        <div class="mcards" id="methodCards"></div>
+      </div>
+
+      <div class="panel" id="emptyState">
+        <div class="empty">
+          <div class="empty-h">Ingen metode valgt</div>
+          <p class="empty-sub">Vælg metode for at se, hvilke effekter den kan belyse.</p>
+          <p class="empty-expl">Forskellige metoder belyser forskellige dele af SES Familys effektgrundlag. En offentlig budgetmodel kan fx vise mulige besparelser i offentligt forbrug, men ikke borgerens oplevede trivsel. En velfærdsmodel kan vise trivsel og livskvalitet, men ikke kommunal kasseeffekt.</p>
+        </div>
+      </div>
+
+      <div class="panel" id="scopePanel">
+        <div class="card-h"><h2>Beregningens omfang</h2><span class="hint">hvad der er med — og hvad der ikke er</span></div>
+        <div id="scopeBody"></div>
+      </div>
+
+      <div class="panel" id="coveragePanel">
+        <details class="method">
+          <summary>Detaljeret dækningsmatrix — alle effekter × valgte metoder</summary>
+          <div class="cov-wrap" id="coverageBody" style="margin-top:14px"></div>
+          <div class="cov-legend">
+            <span><i class="st-i"></i>Medtages</span><span><i class="st-a"></i>Kræver antagelse</span><span><i class="st-o"></i>Overlapper</span><span><i class="st-x"></i>Medtages ikke</span><span><i class="st-f"></i>Fremtidigt modul</span>
+          </div>
+        </details>
+      </div>
+
+      <div class="panel" id="overlapPanel">
+        <div class="card-h"><h2>Overlap &amp; justering</h2><span class="hint">D · dobbelttælling</span></div>
+        <div id="overlapBody"></div>
+        <div id="adjControls" class="adj">
+          <div class="adj-q">Mulig dobbelttælling mellem produktionsposterne. Vælg håndtering — valget skrives i antagelsesloggen:</div>
+          <label class="adj-opt"><input type="radio" name="adj" value="warn"> Ingen justering, men tydelig advarsel</label>
+          <label class="adj-opt"><input type="radio" name="adj" value="exclude"> Ekskludér den overlappende post (langtidssygefravær + indkomst)</label>
+          <label class="adj-opt"><input type="radio" name="adj" value="primary"> Vælg primær post: <select id="adjPrimary"><option value="sygedage">Sygedage</option><option value="langtid">Langtidssygefravær</option><option value="indkomst">Indkomst</option></select></label>
+          <label class="adj-opt"><input type="radio" name="adj" value="haircut"> Haircut på sekundære poster: <input type="number" id="adjHaircut" step="5" min="0" max="100"> %</label>
+          <label class="adj-opt"><input type="radio" name="adj" value="parallel"> Vis kun parallelle resultater uden samlet sum</label>
+        </div>
+      </div>
+
+      <div class="panel" id="ccaPanel">
+        <div class="card-h"><h2>CCA-regnskab</h2><span class="hint">A additivt · B parallelt · C ikke medtaget</span></div>
+        <div class="cca" id="ccaBody"></div>
+      </div>
+
+      <div class="panel" id="timePanel">
+        <div class="card-h"><h2>Effekt over tid</h2><span class="hint">økonomisk værdi · kumuleret</span></div>
+        <div id="timechart"></div>
+        <div class="horizons" id="horizons"></div>
+        <div class="note alt" id="timenote"></div>
+      </div>
+
+      <div class="panel" id="actorPanel">
+        <div class="card-h"><h2>Fordelt på aktører</h2><span class="hint">økonomisk værdi · for kohorten</span></div>
+        <div class="actorbar" id="actorbar"></div>
+        <div class="split-note">
+          <span>Offentligt (kommune + region + stat): <b class="num" id="public"></b></span>
+          <span>Privat + arbejdsplads: <b class="num" id="privsum"></b></span>
+        </div>
+        <table class="actors">
+          <thead><tr><th>Aktør</th><th>Pr. forælder</th><th>Pr. barn</th><th>For kohorten</th></tr></thead>
+          <tbody id="actorRows"></tbody>
+        </table>
+      </div>
+
+    </main>
+  </div>
+
+  <section class="cea-layer" id="ceaLayer">
+    <div class="cea-top">
+      <span class="cea-eyebrow">Efter de økonomiske beregninger · en anden type analyse</span>
+      <h2 class="cea-title">Cost-effectiveness · værdi pr. naturlig enhed</h2>
+      <p class="cea-intro">De økonomiske modeller ovenfor lægger kroner sammen på tværs af aktører. Cost-effectiveness gør noget andet: den sætter <b>omkostningen</b> op mod <b>værdien pr. naturlig enhed</b> — fx kr. pr. undgået sygedag eller pr. barn ud af bekymrende skolefravær. Tallene her indgår <b>ikke</b> i de økonomiske summer ovenfor.</p>
+    </div>
+    <div class="cea-body">
+      <div class="ul-flow">
+        <div class="ul-step">
+          <div class="ul-step-marker">1</div>
+          <div class="ul-step-main">
+            <div class="ul-step-head"><div class="ul-step-title">Indtast omkostningerne</div><div class="ul-step-why">Angiv den årlige licens pr. produkt og et skøn for udbredelsesindsatsen — kommunens samlede årlige udgift til SES.</div></div>
+            <div class="cea-license">
+              <div class="cea-lic-head">Hvilke produkter har kommunen, og hvad koster licensen pr. år?</div>
+              <div class="cea-lic-row locked">
+                <label class="cea-chk"><input type="checkbox" id="hasONE" checked disabled> SES ONE <span class="cea-always">standard</span></label>
+                <div class="cea-lic-field"><input type="number" id="licONE" step="1000" placeholder="årlig licens, kr."></div>
+              </div>
+              <div class="cea-lic-row">
+                <label class="cea-chk"><input type="checkbox" id="hasNXT"> SES NXT</label>
+                <div class="cea-lic-field"><input type="number" id="licNXT" step="1000" placeholder="årlig licens, kr." disabled></div>
+              </div>
+              <div class="cea-lic-row">
+                <label class="cea-chk"><input type="checkbox" id="hasPRO"> SES PRO</label>
+                <div class="cea-lic-field"><input type="number" id="licPRO" step="1000" placeholder="årlig licens, kr." disabled></div>
+              </div>
+            </div>
+            <div class="cea-disse">
+              <label class="cea-disse-lab" for="disseCost">Anslået udgift til udbredelse (kr./år)</label>
+              <div class="cea-lic-field"><input type="number" id="disseCost" step="1000" placeholder="kr./år"></div>
+              <p class="cea-disse-rec">Anbefalet tid til udbredelse: <b>3-5 timer pr. uge</b> de første tre måneder, herefter <b>5 timer om måneden</b>.</p>
+            </div>
+            <div class="cea-lic-total" id="ceaLicTotal"></div>
+          </div>
+        </div>
+        <div class="ul-step">
+          <div class="ul-step-marker">2</div>
+          <div class="ul-step-main">
+            <div class="ul-step-head"><div class="ul-step-title">Beregn værdi pr. enhed</div><div class="ul-step-why">Når omkostningerne er indtastet, sættes værdien og omkostningen pr. naturlig enhed op mod hinanden.</div></div>
+            <div id="ceaResult">
+              <button id="ceaCalc" class="cea-calc" type="button">Beregn værdi pr. naturlig enhed</button>
+              <p class="cea-calc-hint" id="ceaCalcHint"></p>
+              <div id="ceaTableWrap" style="display:none">
+                <div class="cea-scope">
+                  <span class="cea-scope-lab">Vis tal for:</span>
+                  <button class="cea-scope-btn" id="ceaScope-cohort" type="button" aria-pressed="true">Hele kohorten</button>
+                  <button class="cea-scope-btn" id="ceaScope-adult" type="button" aria-pressed="false">1 voksen</button>
+                  <button class="cea-scope-btn" id="ceaScope-child" type="button" aria-pressed="false">1 barn</button>
+                </div>
+                <table class="appx"><thead><tr><th>Naturlig enhed</th><th id="ceaQtyHead">I kohorten</th><th>Værdi pr. enhed</th><th>Omkostning pr. enhed</th><th>Business case</th></tr></thead><tbody id="ceaBody"></tbody></table>
+                <p class="note alt" id="ceaNote" style="margin-top:12px"></p>
+                <div class="cea-summary-row">
+                  <button id="ceaSumBtn" class="cea-sum-btn" type="button">Lav kort opsummering af business casen</button>
+                </div>
+                <div id="ceaSummary" class="cea-summary" style="display:none">
+                  <div class="cea-sum-head"><span>Kort opsummering · business case</span><button id="ceaSumCopy" class="cea-sum-copy" type="button">Kopiér</button></div>
+                  <div class="cea-sum-text" id="ceaSumText"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="postcalc">
+      <div class="panel" id="logPanel">
+        <details class="method" open>
+          <summary>E · Antagelseslog — metodevalg, priser, effekter, tidshorisont, diskontering &amp; justeringer</summary>
+          <p class="foot" style="margin-top:14px">Loggen opdateres live efter dine valg. Den viser hele grundlaget, så modellen kan gennemgås.</p>
+          <table class="appx" style="margin-top:8px"><tbody id="logBody"></tbody></table>
+        </details>
+      </div>
+
+      <div class="panel">
+        <details class="method">
+          <summary>Sådan regnes der — og hvad ligger bag</summary>
+          <p class="foot" style="margin-top:14px">Hver effekt oversættes til antal sparede SØM-enheder pr. person og ganges med SØM v3.4's enhedspriser (2025) fordelt på aktører. Skolefravær bruger SØM's publicerede skolefraværsanalyse. Niveau 3 værdisætter trivsel via QALY og placeres i privat-kolonnen, så den aldrig blandes med offentlige besparelser. Statistisk usikkerhed er beskrevet i forskningen, ikke regnet ind i tallene.</p>
+          <table class="eff-table">
+            <thead><tr><th>Effekt</th><th>Grundlag</th><th>Spor</th></tr></thead>
+            <tbody id="effRows"></tbody>
+          </table>
+        </details>
+      </div>
+
+      <div class="panel">
+        <details class="method">
+          <summary>Metode-appendiks — sådan er hver effekt målt</summary>
+          <p class="foot" style="margin-top:14px">Komplet oversigt over måleinstrument og datakilde for hver dokumenteret effekt på tværs af de tre forskningsprojekter. Forsiden viser hvad effekterne er; her står hvordan de er målt.</p>
+          <div id="methodAppendix"></div>
+        </details>
+      </div>
+
+      <p class="foot">Generisk model · 2025-priser · bygget på SØM v3.4 (Social- og Boligstyrelsen), COWI 2020 og de publicerede SES-effektstudier. Tallene er en beslutningsstøtte, ikke en garanti, og afhænger af de valgte antagelser.</p>
+  </div>
+</div>
+
+<script>
+"use strict";
+const ACT=['kom','reg','stat','arb','priv'];
+const ACT_LABEL={kom:'Kommune',reg:'Region',stat:'Stat',arb:'Arbejdsplads',priv:'Privat / borger'};
+const ACT_COLOR={kom:'#2D6A9F',reg:'#5BA3B8',stat:'#1F3D6B',arb:'#C99700',priv:'#137A63'};
+
+const ONE=[
+ {id:'recepter',label:'Færre psykofarmaka-recepter',basis:'28% færre recepter over 5 år (IRR=0,72; p=.045)',F:1.34,unit:{kom:1,reg:303},track:'budget',years:[1,2,3,4,5]},
+ {id:'gp',label:'Færre alm. læge-kontakter',basis:'Lavere primærsektorbrug år 2-3 (OR≈0,6-0,7)',F:1.5,unit:{kom:21,reg:140},track:'budget',years:[2,3]},
+ {id:'psyk',label:'Færre psykologkontakter',basis:'Lavere primærsektorbrug',F:0.4,unit:{kom:54,reg:689},track:'budget',years:[2,3]},
+ {id:'hosp',label:'Færre hospitalsindlæggelser',basis:'32% lavere odds år 4 (OR=0,68; p=.046)',F:0.05,unit:{kom:2779,reg:10438},track:'budget',years:[4]},
+ {id:'sygedage',label:'Færre sygedage (år 1)',basis:'5,82 færre sygedage (d=0,26; p<.001)',F:5.82,unit:{kom:246,stat:292,arb:'PROD'},track:'produktion',years:[1]},
+ {id:'langtid',label:'Færre uger langtidssygefravær (5 år)',basis:'1,24 færre uger (REC=0,87; p=.20 — trend)',F:1.24,unit:{kom:2218,stat:1146},track:'produktion',years:[1,2,3,4,5]},
+ {id:'kontant',label:'Færre uger kontanthjælp (5 år)',basis:'2,51 færre uger (REC=0,94; p=.48 — trend)',F:2.51,unit:{kom:1996,stat:641},track:'produktion',years:[1,2,3,4,5]},
+ {id:'indkomst',label:'Højere arbejdsmarkedsindkomst (5 år)',basis:'+5,21% indkomst (p=.10 — trend)',unit:'INCOME',track:'produktion',years:[1,2,3,4,5]},
+];
+const NXT=[
+ {id:'skole',label:'Ud af bekymrende skolefravær',basis:'Problematisk fravær 55,7%→15,9% (SØM-værdi, 10 år)',unit:'SCHOOL',track:'budget',years:[1,2,3,4,5,6,7,8,9,10]},
+ {id:'somatik',label:'Færre somatiske klager',basis:'OR=4,18 kontrol vs. NXT (p<.001)',F:0.5,unit:{kom:18,reg:144},track:'budget',years:[1]},
+ {id:'soevn',label:'Færre søvnproblemer',basis:'OR=3,99 (p<.001)',F:0.2,unit:{kom:3,reg:626},track:'budget',years:[1]},
+ {id:'ambulant',label:'Færre somatiske ambulante besøg',basis:'Lavere somatisk ressourcebrug',F:0.1,unit:{kom:588,reg:2365},track:'budget',years:[1]},
+];
+
+const DEFAULTS={nF:100,nB:100,prod:1900,tax:0.4,income:113400,
+  schoolValue:41600,schoolShare:0.398,sKom:0.70,sReg:0.05,sStat:0.25,
+  qaly:300000,adultGain:0.05,childGain:0.10,years:1,hasONE:true,hasNXT:false,hasPRO:false,licONE:null,licNXT:null,licPRO:null,disseCost:null,ceaComputed:false,ceaScope:'cohort',ceaSumShown:false,
+  wKom:0,wReg:0,wStat:0,wArb:0,wPriv:0,discount:0.035,perspective:'tilpasset',
+  sel:{budget:false,produktion:false,wellby:false,qaly:false,cea:false,lokal:false},
+  adjMode:'warn',adjPrimary:'sygedage',adjHaircut:0.5,
+  wbAdult:0.5,wbChild:0.3,wbValue:130000,wbHaircut:0.5,
+  nP:0,kommune:'',nInhab:null,nMunEmp:null,fag:{psychologists:0,school_nurses:0,teachers:0,social_workers:0,pedagogues:0,family_therapists:0,gps:0},
+  userMode:'estimate',estComputed:false,strat:{web:1.5,some:3,fysisk:2,intern:1.5,pro:0,ledelse:0},nxtRatio:0.65};
+let P=JSON.parse(JSON.stringify(DEFAULTS));
+
+function ppActor(e,P){
+  let F,u;
+  if(e.unit==='INCOME'){F=P.income;u={kom:P.tax*0.6,stat:P.tax*0.4,priv:1-P.tax};}
+  else if(e.unit==='SCHOOL'){F=P.schoolShare;u={kom:P.schoolValue*P.sKom,reg:P.schoolValue*P.sReg,stat:P.schoolValue*P.sStat};}
+  else {F=e.F;u=Object.assign({},e.unit);if(u.arb==='PROD')u.arb=Math.max(0,P.prod-246-292);}
+  const o={};ACT.forEach(a=>o[a]=F*(u[a]||0));return o;
+}
+function sum(o){return ACT.reduce((s,a)=>s+(o[a]||0),0);}
+function zero(){return {kom:0,reg:0,stat:0,arb:0,priv:0};}
+const OVERLAP_SET=['sygedage','langtid','indkomst'];
+const OVERLAP_SECONDARY=['langtid','indkomst'];
+function adjFactor(id,P){
+  if(!P.sel.produktion) return 1;
+  if(!OVERLAP_SET.includes(id)) return 1;
+  const m=P.adjMode;
+  if(m==='warn'||m==='parallel') return 1;
+  if(m==='exclude') return OVERLAP_SECONDARY.includes(id)?0:1;
+  if(m==='primary') return id===P.adjPrimary?1:0;
+  if(m==='haircut') return OVERLAP_SECONDARY.includes(id)?(1-P.adjHaircut):1;
+  return 1;
+}
+function ppTrack(arr,track,P){const o=zero();arr.forEach(e=>{if(e.track!==track)return;const af=adjFactor(e.id,P);if(af===0)return;const v=ppActor(e,P);ACT.forEach(a=>o[a]+=v[a]*af);});return o;}
+function wellbyVals(P){
+  const y=Math.max(1,P.years);
+  const aWB=P.wbAdult*y, cWB=P.wbChild*y;
+  const aKr=aWB*P.wbValue*(1-P.wbHaircut), cKr=cWB*P.wbValue*(1-P.wbHaircut);
+  return {aWB,cWB,cohortWB:aWB*P.nF+cWB*P.nB,aKr,cKr,cohortKr:aKr*P.nF+cKr*P.nB};
+}
+function compute(P){
+  const W={kom:P.wKom,reg:P.wReg,stat:P.wStat,arb:P.wArb,priv:P.wPriv};
+  const cohort=(f,b)=>{const by={};ACT.forEach(a=>by[a]=f[a]*P.nF*W[a]+b[a]*P.nB*W[a]);return {f,b,by,grand:sum(by),ppF:sum(f),ppB:sum(b)};};
+  const budget=cohort(P.sel.budget?ppTrack(ONE,'budget',P):zero(),P.sel.budget?ppTrack(NXT,'budget',P):zero());
+  const prod=cohort(P.sel.produktion?ppTrack(ONE,'produktion',P):zero(),P.sel.produktion?ppTrack(NXT,'produktion',P):zero());
+  const qa=P.sel.qaly?P.adultGain*P.years*P.qaly:0, qc=P.sel.qaly?P.childGain*P.years*P.qaly:0;
+  const qaly={ppF:qa,ppB:qc,grand:qa*P.nF+qc*P.nB};
+  const wb=P.sel.wellby?wellbyVals(P):null;
+  const econF={},econB={},econByActor={};
+  ACT.forEach(a=>{econF[a]=budget.f[a]+prod.f[a];econB[a]=budget.b[a]+prod.b[a];econByActor[a]=budget.by[a]+prod.by[a];});
+  return {budget,prod,qaly,wb,econF,econB,econByActor,econGrand:sum(econByActor),econPpF:budget.ppF+prod.ppF,econPpB:budget.ppB+prod.ppB};
+}
+function econSummable(P){
+  if(!P.sel.budget&&!P.sel.produktion) return false;
+  if(P.sel.produktion&&(P.adjMode==='warn'||P.adjMode==='parallel')) return false;
+  return true;
+}
+function range(a,b){const o=[];for(let i=a;i<=b;i++)o.push(i);return o;}
+function effList(P){const L=[];
+  if(P.sel.budget) ONE.forEach(e=>{ if(e.track==='budget') L.push({tot:ppActor(e,P),years:e.years,rec:'F'}); });
+  if(P.sel.produktion) ONE.forEach(e=>{ if(e.track==='produktion'){const af=adjFactor(e.id,P);if(af===0)return;const v=ppActor(e,P);const t={};ACT.forEach(a=>t[a]=(v[a]||0)*af);L.push({tot:t,years:e.years,rec:'F'});} });
+  if(P.sel.budget) NXT.forEach(e=>{ L.push({tot:ppActor(e,P),years:e.years,rec:'B'}); });
+  return L;}
+function cumAt(H,P,disc){
+  const W={kom:P.wKom,reg:P.wReg,stat:P.wStat,arb:P.wArb,priv:P.wPriv};
+  const r=disc?P.discount:0;
+  const by=zero(); let ppF=0,ppB=0;
+  effList(P).forEach(e=>{ const n=e.years.length;
+    e.years.forEach(y=>{ if(y>H)return; const df=1/Math.pow(1+r,y-1);
+      ACT.forEach(a=>{ const v=(e.tot[a]||0)/n*df; const cnt=e.rec==='F'?P.nF:P.nB; by[a]+=v*cnt*W[a]; if(e.rec==='F')ppF+=v; else ppB+=v; }); }); });
+  return {by,grand:sum(by),ppF,ppB};}
+const kr=n=>Math.round(n).toLocaleString('da-DK')+' kr.';
+const krMio=n=>{const m=n/1e6; return (m>=10?m.toFixed(1):m.toFixed(2)).replace('.',',')+' mio. kr.';};
+const $=id=>document.getElementById(id);
+function ceaRows(P){return {
+  ONE:[{l:'Færre sygedag',per:5.82,val:P.prod},{l:'Færre psykofarmaka-recept',per:1.34,val:304},{l:'Færre primærsektorkontakt',per:1.9,val:284},{l:'Færre uge langtidssygefravær',per:1.24,val:3364,trend:true}],
+  NXT:[{l:'Barn ud af bekymrende skolefravær',per:0.398,val:P.schoolValue},{l:'Undgået fuld fraværsdag (pr. skoleår)',per:10.8,val:null,note:'indgår i skolefraværsværdien'},{l:'Undgået delvist fraværstilfælde (pr. skoleår)',per:18.2,val:null,note:'indgår i skolefraværsværdien'}],
+};}
+const PERSPECTIVES={samfund:{wKom:1,wReg:1,wStat:1,wArb:1,wPriv:1},offentlig:{wKom:1,wReg:1,wStat:1,wArb:0,wPriv:0},kommune:{wKom:1,wReg:0,wStat:0,wArb:0,wPriv:0},region:{wKom:0,wReg:1,wStat:0,wArb:0,wPriv:0},stat:{wKom:0,wReg:0,wStat:1,wArb:0,wPriv:0},arbejdsplads:{wKom:0,wReg:0,wStat:0,wArb:1,wPriv:0},borger:{wKom:0,wReg:0,wStat:0,wArb:0,wPriv:1}};
+const PERSP_LABEL={samfund:'Samfund (alle aktører)',offentlig:'Samlet offentlig',kommune:'Kommune',region:'Region',stat:'Stat',arbejdsplads:'Arbejdsplads',borger:'Borger (privat)',tilpasset:'Tilpasset (frie vægte)'};
+const ACTORS=[{id:'kom',w:'wKom',label:'Kommune'},{id:'reg',w:'wReg',label:'Region'},{id:'stat',w:'wStat',label:'Stat'},{id:'arb',w:'wArb',label:'Arbejdsplads'},{id:'priv',w:'wPriv',label:'Borger'}];
+const ACTW=['wKom','wReg','wStat','wArb','wPriv'];
+function anyActor(P){return ACTW.some(w=>P[w]===1);}
+function buildPerspControls(){
+  const presets=[['samfund','Samfund'],['offentlig','Offentlig'],['kommune','Kommune'],['region','Region'],['stat','Stat'],['arbejdsplads','Arbejdsplads'],['borger','Borger']];
+  $('perspPresets').innerHTML=presets.map(([k,l])=>'<button type="button" class="pp-btn" data-k="'+k+'">'+l+'</button>').join('');
+  $('perspPresets').querySelectorAll('.pp-btn').forEach(b=>b.addEventListener('click',()=>applyPerspective(b.getAttribute('data-k'))));
+  $('actorToggles').innerHTML=ACTORS.map(a=>'<button type="button" class="at-sw" id="at-'+a.id+'" aria-pressed="false" style="--ac:'+ACT_COLOR[a.id]+'"><span class="sw-track"><span class="sw-knob"></span></span><span class="at-label">'+a.label+'</span></button>').join('');
+  ACTORS.forEach(a=>$('at-'+a.id).addEventListener('click',()=>{P[a.w]=P[a.w]?0:1;syncPersp();render();}));
+}
+function syncPersp(){
+  let match='tilpasset';
+  Object.keys(PERSPECTIVES).forEach(k=>{ if(ACTW.every(w=>PERSPECTIVES[k][w]===(P[w]?1:0))) match=k; });
+  P.perspective=match;
+  document.querySelectorAll('.pp-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('data-k')===P.perspective));
+  ACTORS.forEach(a=>{const el=$('at-'+a.id); if(el){const on=P[a.w]===1; el.classList.toggle('active',on); el.setAttribute('aria-pressed',on);}});
+}
+function applyPerspective(key){ if(PERSPECTIVES[key]) Object.assign(P,PERSPECTIVES[key]); syncPersp(); render(); }
+
+const METHODS=[
+ {id:'budget',name:'Offentligt budgetpotentiale',method:'SØM & direkte cost-offset',
+  can:['Skolefravær','Sundhedskontakter (læge, psykolog, hospital)','Psykofarmaka-recepter','Offentlige udgifter','Fordeling kommune / region / stat'],
+  cannot:['Borgernes egen trivsel','Livskvalitet','Konfliktens oplevede belastning','Bred velfærd'],
+  output:'Kroner · offentligt budgetpotentiale',
+  note:'Additivt: kan indgå i økonomisk regnskab, hvis poster ikke også tælles via andre cost-offset-metoder.'},
+ {id:'produktion',name:'Produktion & arbejdsmarked',method:'Humankapital, registerdata & fiscal impact',
+  can:['Sygedage','Produktionsværdi','Arbejdsmarkedsindkomst','Sygedagpengeuger','Kontanthjælp'],
+  cannot:['Borgerens egen velfærd','Børns trivsel'],
+  output:'Kroner · produktion, skat & overførsler',
+  note:'Risiko: overlap mellem sygedage, langtidssygefravær og indkomst.'},
+ {id:'wellby',name:'WELLBY',method:'Wellbeing valuation',status:'scenarie',
+  can:['Mental sundhed','Stress','Livskvalitet','Hverdagsfunktion','Konfliktbelastning'],
+  cannot:['Kommunal budgetbesparelse'],
+  output:'WELLBY · evt. kroner som velfærdsværdi',
+  note:'Risiko: overlap med QALY og cost of illness. Scenarie med tydelig, redigerbar mapping.'},
+ {id:'qaly',name:'QALY',method:'Cost-utility',status:'antagelse',
+  can:['Helbredsrelateret livskvalitet'],
+  cannot:['Bred social trivsel','Skolefravær som budgetpost','Kommunal driftseffekt'],
+  output:'QALY · evt. kroner som sundhedsøkonomisk velfærdsværdi',
+  note:'Risiko: overlap med WELLBY og cost of illness. Foreløbigt scenarie; SF-6D undersøges senere for voksne.'},
+ {id:'cea',name:'CEA',method:'Cost-effectiveness',
+  can:['Omkostning pr. naturlig enhed (pr. barn ud af fravær, pr. sygedag, pr. recept, pr. fraværsdag)'],
+  cannot:['Samlet samfundsøkonomisk værdi'],
+  output:'Kr. pr. naturlig enhed',
+  note:'Kræver omkostning pr. bruger; ellers vises kun værdi pr. enhed, ikke ægte omkostning pr. enhed.'},
+ {id:'lokal',name:'Fremtidige lokale moduler',method:'Lokale antagelser',status:'fremtidigt',
+  can:['PPR','Familieindsatser','Kommunal arbejdsgivergevinst','SES PRO driftsværdi'],
+  cannot:['Bruges som nationalt standardestimat'],
+  output:'Lokalt scenarie',
+  note:'Kommunen eller SES indtaster selv antagelser. Ikke en del af base case.'},
+];
+const METHOD_BY=id=>METHODS.find(m=>m.id===id);
+const EFFECTS=[
+ {id:'skole',label:'Skolefravær (børn)'},{id:'sundhed',label:'Sundhedskontakter (voksne)'},{id:'recept',label:'Psykofarmaka-recepter (voksne)'},
+ {id:'sygedage',label:'Sygedage (voksne)'},{id:'langtid',label:'Langtidssygefravær (voksne)'},{id:'indkomst',label:'Arbejdsmarkedsindkomst (voksne)'},
+ {id:'kontant',label:'Kontanthjælp (voksne)'},{id:'mental',label:'Mental sundhed / stress / depression (voksne)'},{id:'livskval',label:'Livskvalitet / HRQoL'},
+ {id:'sdq',label:'Børns trivsel (SDQ)'},{id:'konflikt',label:'Forældrekonflikt'},{id:'somatik',label:'Somatik / søvn (børn)'},{id:'ppr',label:'PPR / familieindsats / SES PRO'},
+];
+const COVERAGE={
+ budget:{skole:'I',sundhed:'I',recept:'I',somatik:'I',sygedage:'X',langtid:'X',indkomst:'X',kontant:'X',mental:'X',livskval:'X',sdq:'X',konflikt:'X',ppr:'F'},
+ produktion:{skole:'X',sundhed:'X',recept:'X',somatik:'X',sygedage:'I',langtid:'O',indkomst:'O',kontant:'I',mental:'X',livskval:'X',sdq:'X',konflikt:'X',ppr:'F'},
+ wellby:{skole:'X',sundhed:'X',recept:'X',somatik:'A',sygedage:'X',langtid:'X',indkomst:'X',kontant:'X',mental:'I',livskval:'I',sdq:'I',konflikt:'I',ppr:'F'},
+ qaly:{skole:'X',sundhed:'X',recept:'X',somatik:'A',sygedage:'X',langtid:'X',indkomst:'X',kontant:'X',mental:'A',livskval:'I',sdq:'A',konflikt:'X',ppr:'F'},
+ cea:{skole:'I',sundhed:'I',recept:'I',somatik:'X',sygedage:'I',langtid:'A',indkomst:'X',kontant:'X',mental:'X',livskval:'X',sdq:'X',konflikt:'F',ppr:'X'},
+ lokal:{skole:'X',sundhed:'X',recept:'X',somatik:'X',sygedage:'X',langtid:'X',indkomst:'X',kontant:'X',mental:'X',livskval:'X',sdq:'X',konflikt:'X',ppr:'F'},
+};
+const STATUS_LABEL={I:'Medtages',X:'Medtages ikke',A:'Kræver antagelse',O:'Overlapper',F:'Fremtidigt modul'};
+const STATUS_CLS={I:'st-i',X:'st-x',A:'st-a',O:'st-o',F:'st-f'};
+const OVERLAPS=[
+ {need:['wellby','qaly'],type:'parallel',why:'Begge værdisætter velfærd/livskvalitet. De er alternative perspektiver.',sum:'Nej — vises parallelt, summeres aldrig'},
+ {need:['qaly','budget'],type:'overlap',why:'QALY og cost-of-illness (sundhedsudgifter) kan begge knytte sig til helbred og sygdomsbyrde.',sum:'Kun parallelt / med fradrag'},
+ {need:['wellby','budget'],type:'overlap',why:'WELLBY og cost-of-illness kan overlappe på sundhedsdimensionen.',sum:'Kun parallelt / med fradrag'},
+ {need:['budget','lokal'],type:'overlap',why:'SØM-skolefravær og PPR/familieindsats kan knytte sig til samme børneproblematik.',sum:'Kun hvis overlap fratrækkes'},
+ {need:['produktion'],type:'internal',why:'Sygedage, langtidssygefravær og indkomst kan være udtryk for samme arbejdsmarkedseffekt.',sum:'Kræver justering (vælg nedenfor)'},
+];
+const FAGGRUPPER=[
+ {id:'psychologists',en:'Psychologists',da:'psykologer'},
+ {id:'school_nurses',en:'School health nurses',da:'sundhedsplejen'},
+ {id:'teachers',en:'Teachers',da:'skolelærere'},
+ {id:'social_workers',en:'Social workers',da:'socialrådgivere'},
+ {id:'pedagogues',en:'Pedagogues / early-childhood',da:'pædagoger'},
+ {id:'family_therapists',en:'Family therapists / counselors',da:'familiebehandlere'},
+ {id:'gps',en:'GPs / primary care',da:'praktiserende læger'},
+];
+const KOMMUNER=['Andet / international','Albertslund','Allerød','Assens','Ballerup','Billund','Bornholm','Brøndby','Brønderslev','Dragør','Egedal','Esbjerg','Fanø','Favrskov','Faxe','Fredensborg','Fredericia','Frederiksberg','Frederikshavn','Frederikssund','Furesø','Faaborg-Midtfyn','Gentofte','Gladsaxe','Glostrup','Greve','Gribskov','Guldborgsund','Haderslev','Halsnæs','Hedensted','Helsingør','Herlev','Herning','Hillerød','Hjørring','Holbæk','Holstebro','Horsens','Hvidovre','Høje-Taastrup','Hørsholm','Ikast-Brande','Ishøj','Jammerbugt','Kalundborg','Kerteminde','Kolding','København','Køge','Langeland','Lejre','Lemvig','Lolland','Lyngby-Taarbæk','Læsø','Mariagerfjord','Middelfart','Morsø','Norddjurs','Nordfyns','Nyborg','Næstved','Odder','Odense','Odsherred','Randers','Rebild','Ringkøbing-Skjern','Ringsted','Roskilde','Rudersdal','Rødovre','Samsø','Silkeborg','Skanderborg','Skive','Slagelse','Solrød','Sorø','Stevns','Struer','Svendborg','Syddjurs','Sønderborg','Thisted','Tønder','Tårnby','Vallensbæk','Varde','Vejen','Vejle','Vesthimmerlands','Viborg','Vordingborg','Ærø','Aabenraa','Aalborg','Aarhus'];
+const KOMMUNEDATA={"Stevns":[23842,1387,1080],"Varde":[49468,2655,2174],"Herning":[90546,4403,3964],"Svendborg":[60027,3173,2871],"Mariagerfjord":[41541,2169,1886],"Struer":[20122,1088,861],"Kerteminde":[24299,1359,1114],"Holstebro":[59324,3113,2610],"Lejre":[29879,1451,1275],"Tønder":[36174,1781,1606],"Sorø":[30853,1933,1720],"Vesthimmerlands":[35632,2059,1698],"Morsø":[19344,949,793],"Langeland":[11841,616,439],"Holbæk":[75009,4172,3948],"Rebild":[31280,1456,1399],"Odder":[24310,1075,1017],"Vallensbæk":[18689,875,853],"Frederiksberg":[106150,3363,4275],"Vordingborg":[44831,2563,2175],"Ishøj":[24685,1232,1297],"Hjørring":[62979,3608,3132],"Roskilde":[92697,4520,3900],"Ringsted":[36010,2064,1710],"Guldborgsund":[59119,3535,3029],"Helsingør":[64244,3687,3016],"Slagelse":[80959,4661,4340],"Thisted":[42572,2224,1878],"Brønderslev":[36529,2083,1757],"Rødovre":[45138,2057,2412],"Fanø":[3332,179,137],"Brøndby":[40990,2219,2114],"Skive":[44104,2259,1961],"Lemvig":[18596,843,629],"Faxe":[38143,2411,1926],"Odsherred":[31988,1831,1484],"Sønderborg":[74123,3804,3591],"Horsens":[98912,5247,4715],"Middelfart":[40625,2228,1841],"Vejen":[42641,2311,1937],"Syddjurs":[44394,2179,1820],"Kolding":[96214,5253,4950],"Skanderborg":[66352,3221,2790],"Frederikshavn":[57523,3165,2637],"Læsø":[1683,81,43],"Nyborg":[32401,1708,1575],"Randers":[100564,5955,5240],"Høje-Taastrup":[60458,3233,2831],"Nordfyns":[29179,1669,1251],"Egedal":[46240,2343,1912],"Greve":[54120,3021,2643],"Jammerbugt":[37998,2075,1707],"Samsø":[3617,164,105],"Aalborg":[226033,10173,9516],"Odense":[213168,9727,9914],"Assens":[40369,2423,1926],"Bornholm":[38677,2199,1813],"Billund":[27200,1413,1223],"Albertslund":[28397,1399,1572],"Dragør":[14474,628,525],"Lolland":[38533,2260,1857],"Kalundborg":[47954,2837,2512],"Favrskov":[49773,2239,1886],"Hedensted":[48578,2452,2174],"Hørsholm":[25354,1159,1003],"Ærø":[6029,210,215],"Furesø":[42874,1920,1747],"Ikast-Brande":[43305,2237,2075],"Faaborg-Midtfyn":[52328,2799,2421],"Solrød":[25040,1381,1204],"Norddjurs":[36477,2100,1751],"Silkeborg":[102753,4973,4323],"Fredensborg":[42445,2199,1937],"Fredericia":[52939,2905,2862],"Køge":[63962,3721,3075],"Esbjerg":[114947,6039,5722],"Haderslev":[55218,3132,2635],"Viborg":[97874,5333,4799],"Hillerød":[55182,2871,2412],"Ballerup":[53950,2329,2725],"Hvidovre":[54228,2600,2889],"København":[673438,26427,28980],"Frederikssund":[47450,2643,2235],"Gladsaxe":[71185,3324,3476],"Halsnæs":[31738,1888,1474],"Gentofte":[75086,3095,3023],"Tårnby":[44214,2179,2242],"Glostrup":[25834,1095,1155],"Lyngby-Taarbæk":[58614,2240,2179],"Gribskov":[41787,2289,1771],"Aarhus":[378361,14107,14422],"Næstved":[85163,5249,4493],"Rudersdal":[57912,2313,2015],"Vejle":[123250,6700,5666],"Herlev":[32030,1329,1642],"Allerød":[26496,1156,995],"Ringkøbing-Skjern":[55405,2721,2133],"Aabenraa":[58405,3359,3024]};
+function buildContextInputs(){
+  $('kommune').innerHTML='<option value="">— vælg kommune —</option>'+KOMMUNER.map(k=>'<option value="'+k+'">'+k+'</option>').join('');
+  $('faggrupper').innerHTML=FAGGRUPPER.map(f=>'<div class="fg-row"><label for="fg-'+f.id+'">'+f.en+' <span class="fg-da">('+f.da+')</span></label><input type="number" id="fg-'+f.id+'" min="0" step="1" value="0"></div>').join('');
+  FAGGRUPPER.forEach(f=>{ $('fg-'+f.id).addEventListener('input',()=>{P.fag[f.id]=Math.max(0,parseInt($('fg-'+f.id).value)||0);render();}); });
+}
+function selList(P){return METHODS.filter(m=>P.sel[m.id]);}
+function activeOverlaps(P){return OVERLAPS.filter(o=>o.need.every(id=>P.sel[id]));}
+function show(id,on){const el=$(id);if(el)el.style.display=on?'':'none';}
+function coverageHTML(sel){
+  const head='<tr><th>SES-effekt</th>'+sel.map(m=>'<th>'+m.name+'</th>').join('')+'</tr>';
+  const rows=EFFECTS.map(e=>'<tr><td>'+e.label+'</td>'+sel.map(m=>{const st=COVERAGE[m.id][e.id];return '<td><span class="st '+STATUS_CLS[st]+'">'+STATUS_LABEL[st]+'</span></td>';}).join('')+'</tr>').join('');
+  return '<table class="cov"><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>';
+}
+function overlapHTML(ovs){
+  return ovs.map(o=>{
+    const names=o.need.map(id=>METHOD_BY(id).name).join(' + ');
+    const cls=o.type==='parallel'?'par':(o.type==='internal'?'int':'ovl');
+    const lab=o.type==='parallel'?'Parallelt':(o.type==='internal'?'Internt overlap':'Overlap');
+    return '<div class="ov-item"><div class="ov-head"><span class="ov-badge '+cls+'">'+lab+'</span><b>'+names+'</b></div><div class="ov-why">'+o.why+'</div><div class="ov-sum">Må summeres: <b>'+o.sum+'</b></div></div>';
+  }).join('');
+}
+function ccaRow(cls,label,val){return '<div class="cca-row"><span class="cl"><span class="trk '+cls+'"></span>'+label+'</span><span class="cv num">'+val+'</span></div>';}
+function notIncluded(sel){
+  return EFFECTS.filter(e=>e.id!=='ppr').filter(e=>!sel.some(m=>['I','A','O'].includes(COVERAGE[m.id][e.id]))).map(e=>e.label);
+}
+function ccaHTML(R,P,sel){
+  let h=''; const econSel=P.sel.budget||P.sel.produktion;
+  if(econSel){
+    h+='<div class="cca-sec">A · Additive økonomiske poster</div>';
+    if(!anyActor(P)){
+      h+='<div class="cca-inline">Tænd mindst én aktør i brugerlaget ovenfor — så fordeles og summeres den økonomiske værdi her.</div>';
+    } else {
+      if(P.sel.budget) h+=ccaRow('b','Offentligt budgetpotentiale <span class="mini">SØM</span>',kr(R.budget.grand));
+      if(P.sel.produktion) h+=ccaRow('p','Produktion & arbejdsmarked',kr(R.prod.grand));
+      if(econSummable(P)) h+='<div class="cca-row sumrow"><span class="cl">Samlet økonomisk værdi</span><span class="cv num">'+kr(R.econGrand)+'</span></div>';
+      else h+='<div class="cca-row sumrow nosum"><span class="cl">Samlet økonomisk værdi</span><span class="cv">'+(P.adjMode==='parallel'?'vises ikke · kun parallelle':'ikke metodisk summerbar')+'</span></div>';
+    }
+  }
+  if(P.sel.wellby||P.sel.qaly){
+    h+='<div class="cca-sec">B · Parallelle velfærdsperspektiver · må ikke summeres</div>';
+    if(P.sel.wellby&&R.wb) h+=ccaRow('w','Borgervelfærd (WELLBY) <span class="mini">scenarie</span>',krMio(R.wb.cohortKr)+' · '+Math.round(R.wb.cohortWB).toLocaleString('da-DK')+' WELLBYs');
+    if(P.sel.qaly) h+=ccaRow('q','Sundhedsøkonomisk velfærd (QALY) <span class="mini">antagelse</span>',kr(R.qaly.grand));
+    if(P.sel.wellby&&P.sel.qaly) h+='<div class="cca-inline">WELLBY og QALY er <b>alternative</b> værdisætninger af samme velfærd — vist side om side, aldrig lagt sammen.</div>';
+  }
+  const ni=notIncluded(sel);
+  h+='<div class="cca-sec">C · Dokumenterede effekter uden for de valgte metoder</div>';
+  h+=ni.length?'<div class="notincl">'+ni.map(e=>'<span class="ni-chip">'+e+'</span>').join('')+'</div>':'<div class="cca-inline">De valgte metoder dækker alle dokumenterede effektdomæner (med antagelser hvor markeret).</div>';
+  return h;
+}
+function renderTime(R,P){
+  const maxYear=Math.max(10,Math.round(P.years));
+  const cum=[],cumD=[]; for(let y=1;y<=maxYear;y++){ cum.push(cumAt(y,P,false).grand); cumD.push(cumAt(y,P,true).grand); }
+  const life=cumAt(99999,P,false).grand, lifeD=cumAt(99999,P,true).grand; const maxT=Math.max(life,1);
+  const Wd=700,Hg=210,pL=58,pR=14,pT=14,pB=28;
+  const xx=y=>pL+(y-1)/(maxYear-1)*(Wd-pL-pR); const yy=v=>Hg-pB-(v/maxT)*(Hg-pT-pB);
+  const ptsOf=arr=>arr.map((v,i)=>`${xx(i+1).toFixed(1)},${yy(v).toFixed(1)}`);
+  let pts=ptsOf(cum), ptsD=ptsOf(cumD);
+  const area=`M${xx(1).toFixed(1)},${(Hg-pB).toFixed(1)} L`+pts.join(' L')+` L${xx(maxYear).toFixed(1)},${(Hg-pB).toFixed(1)} Z`;
+  const line=`M`+pts.join(' L'); const lineD=`M`+ptsD.join(' L');
+  let grid=''; for(let g=0;g<=2;g++){ const v=maxT*g/2; const y=yy(v); grid+=`<line x1="${pL}" y1="${y.toFixed(1)}" x2="${Wd-pR}" y2="${y.toFixed(1)}" stroke="#EEF1F5"/><text x="${pL-8}" y="${(y+3).toFixed(1)}" text-anchor="end">${(v/1e6).toFixed(1).replace('.',',')} mio</text>`; }
+  const marks=[1,3,5,10].filter(y=>y<=maxYear); let mk=''; marks.forEach(y=>{ const cx=xx(y),cy=yy(cum[y-1]); mk+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="4" fill="#137A63" stroke="#fff" stroke-width="1.5"/><text x="${cx.toFixed(1)}" y="${Hg-9}" text-anchor="middle">${y} år</text>`; });
+  $('timechart').innerHTML=`<svg class="tchart" viewBox="0 0 ${Wd} ${Hg}" role="img">${grid}<path d="${area}" fill="var(--value-soft)"/><path d="${line}" fill="none" stroke="var(--value)" stroke-width="2.5"/><path d="${lineD}" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-dasharray="5 4"/>${mk}</svg><div class="tlegend"><span><i class="ln"></i>Udiskonteret</span><span><i class="ln d"></i>Nutidsværdi · r=${(P.discount*100).toLocaleString('da-DK')} %</span></div>`;
+  const hzData=[[1,'1 år'],[3,'3 år'],[5,'5 år'],[10,'10 år']];
+  let hz=hzData.map(([h,lab])=>`<div class="hz"><div class="h">${lab}</div><div class="v num">${krMio(cumAt(h,P,false).grand)}</div><div class="npv num">NPV ${krMio(cumAt(h,P,true).grand)}</div></div>`).join('');
+  hz+=`<div class="hz life"><div class="h">Livstid</div><div class="v num">${krMio(life)}</div><div class="npv num">NPV ${krMio(lifeD)}</div></div>`;
+  $('horizons').innerHTML=hz;
+  $('timenote').innerHTML='Kumuleret <b>økonomisk værdi</b> af de valgte økonomiske metoder (med evt. justering). Stiplet linje = nutidsværdi (NPV), Finansministeriets sats (default 3,5 %). Velfærdsspor (WELLBY/QALY) indgår ikke her — de vises parallelt ovenfor.';
+}
+function renderActor(R,P){
+  const tot=R.econGrand||1;
+  $('actorbar').innerHTML=ACT.map(a=>R.econByActor[a]>0?`<span style="width:${R.econByActor[a]/tot*100}%;background:${ACT_COLOR[a]}" title="${ACT_LABEL[a]}: ${kr(R.econByActor[a])}"></span>`:'').join('');
+  $('public').textContent=kr(R.econByActor.kom+R.econByActor.reg+R.econByActor.stat);
+  $('privsum').textContent=kr(R.econByActor.priv+R.econByActor.arb);
+  $('actorRows').innerHTML=ACT.map(a=>`<tr><td><span class="dot" style="background:${ACT_COLOR[a]}"></span>${ACT_LABEL[a]}</td><td class="num">${kr(R.econF[a])}</td><td class="num">${kr(R.econB[a])}</td><td class="num">${kr(R.econByActor[a])}</td></tr>`).join('')+`<tr class="total"><td>I alt</td><td class="num">${kr(R.econPpF)}</td><td class="num">${kr(R.econPpB)}</td><td class="num">${kr(R.econGrand)}</td></tr>`;
+}
+function ceaSummaryText(P){
+  const C=ceaRows(P);
+  const Lone=(P.licONE!=null&&P.licONE>0)?P.licONE:null;
+  const Lnxt=(P.hasNXT&&P.licNXT!=null&&P.licNXT>0)?P.licNXT:null;
+  const lics=(P.licONE||0)+(P.hasNXT?(P.licNXT||0):0)+(P.hasPRO?(P.licPRO||0):0);
+  const disse=(P.disseCost!=null&&P.disseCost>0)?P.disseCost:0;
+  const tot=lics+disse;
+  const L=[];
+  const prods='SES ONE'+(P.hasNXT?' + SES NXT':'')+(P.hasPRO?' + SES PRO':'');
+  let users=P.nF.toLocaleString('da-DK')+' voksne';
+  if(P.hasNXT) users+=' og '+P.nB.toLocaleString('da-DK')+' børn';
+  L.push('Med '+users+' om året ('+prods+') er kommunens samlede årlige udgift '+kr(tot)+(disse>0?' (licenser '+kr(lics)+' + udbredelse '+kr(disse)+')':'')+'.');
+  const rows=[];
+  const add=(it,n,Lp)=>{ if(Lp==null||it.val==null) return; const u=it.per*n; if(u<=0) return; const c=Lp/u; rows.push({l:it.l,c:c,v:it.val,r:it.val/c,t:it.trend}); };
+  C.ONE.forEach(it=>add(it,P.nF,Lone));
+  if(P.hasNXT) C.NXT.forEach(it=>add(it,P.nB,Lnxt));
+  if(rows.length){
+    L.push('');
+    L.push('Pr. naturlig enhed (hele produktets licens tilskrevet den enkelte effekt):');
+    rows.forEach(x=>L.push('\u2022 '+x.l+(x.t?' (trend)':'')+': ca. '+kr(x.c)+' i licens pr. enhed mod en v\u00e6rdi p\u00e5 '+kr(x.v)+' \u2014 ca. '+(Math.round(x.r*10)/10).toLocaleString('da-DK')+'\u00d7 v\u00e6rdi pr. omkostningskrone.'));
+  } else {
+    L.push('');
+    L.push('Indtast licens og forventede brugertal for at f\u00e5 omkostning og business case pr. enhed.');
+  }
+  L.push('');
+  L.push('Bem\u00e6rk: tallene pr. enhed er alternative n\u00e6vnere og m\u00e5 ikke l\u00e6gges sammen \u2014 hver post foruds\u00e6tter, at hele licensen retf\u00e6rdigg\u00f8res af netop den effekt. Udbredelse er en f\u00e6lles implementeringsudgift oven i licensen. Trend-markerede effekter er ikke statistisk sikre 5-\u00e5rseffekter.');
+  return L.join('\n');
+}
+function renderCEA(P){
+  const C=ceaRows(P);
+  if($('licNXT')) $('licNXT').disabled=!P.hasNXT;
+  if($('licPRO')) $('licPRO').disabled=!P.hasPRO;
+  const Lone=(P.licONE!=null&&P.licONE>0)?P.licONE:null;
+  const Lnxt=(P.hasNXT&&P.licNXT!=null&&P.licNXT>0)?P.licNXT:null;
+  const lics=(P.licONE||0)+(P.hasNXT?(P.licNXT||0):0)+(P.hasPRO?(P.licPRO||0):0);
+  const disse=(P.disseCost!=null&&P.disseCost>0)?P.disseCost:0;
+  const tot=lics+disse;
+  if($('ceaLicTotal')) $('ceaLicTotal').innerHTML = tot>0 ? 'Samlet \u00e5rlig udgift: <span class="num">'+kr(tot)+'</span> <span class="cea-tot-split">(licenser '+kr(lics)+(disse>0?' + udbredelse '+kr(disse):'')+')</span>' : '';
+  const canCalc = Lone!=null;
+  if($('ceaCalc')){ $('ceaCalc').disabled=!canCalc; show('ceaCalc',!P.ceaComputed); }
+  if($('ceaCalcHint')){ if(P.ceaComputed){ show('ceaCalcHint',false); } else { show('ceaCalcHint',true); $('ceaCalcHint').textContent = canCalc ? 'Klar \u2014 tryk for at s\u00e6tte v\u00e6rdi op mod omkostning pr. naturlig enhed.' : 'Indtast mindst SES ONE-licensen ovenfor for at beregne.'; } }
+  show('ceaTableWrap',!!P.ceaComputed);
+  if(!P.ceaComputed){ P.ceaSumShown=false; if($('ceaSummary')) show('ceaSummary',false); return; }
+  const sc=P.ceaScope||'cohort';
+  ['cohort','adult','child'].forEach(k=>{ const b=$('ceaScope-'+k); if(b) b.setAttribute('aria-pressed', sc===k); });
+  if($('ceaQtyHead')) $('ceaQtyHead').textContent = sc==='adult'?'Pr. voksen':(sc==='child'?'Pr. barn':'I kohorten');
+  const fmtR=r=>(Math.round(r*10)/10).toLocaleString('da-DK')+'\u00d7';
+  const crow=(it,n,L)=>{
+    let qty;
+    if(sc==='cohort'){ qty=Math.round(it.per*n).toLocaleString('da-DK')+' <span class="mini">('+it.per.toLocaleString('da-DK')+' pr. bruger)</span>'; }
+    else { qty=it.per.toLocaleString('da-DK'); }
+    const vrd=it.val!=null?kr(it.val):(it.note?`<span class="mini">${it.note}</span>`:'\u2014');
+    let omk='<span class="mini">indtast licens</span>', bc='<span class="mini">\u2014</span>';
+    if(L!=null){ const u=it.per*n; if(u>0){ omk=kr(L/u); if(it.val!=null){ const r=it.val/(L/u); bc='<span class="cea-bc '+(r>=1?'pos':'neg')+'">'+fmtR(r)+'</span>'; } } else { omk='<span class="mini">afventer brugertal</span>'; } }
+    return `<tr><td>${it.l}${it.trend?' <span class="chip trend">trend</span>':''}</td><td class="num">${qty}</td><td class="num">${vrd}</td><td class="num">${omk}</td><td class="num">${bc}</td></tr>`;
+  };
+  let h='';
+  if(sc!=='child'){ h+=`<tr class="grp"><td colspan="5">SES ONE \u00b7 pr. for\u00e6lder</td></tr>`+C.ONE.map(it=>crow(it,P.nF,Lone)).join(''); }
+  if(sc!=='adult' && (P.hasNXT||sc==='child')){ h+=`<tr class="grp"><td colspan="5">SES NXT \u00b7 pr. barn</td></tr>`+C.NXT.map(it=>crow(it,P.nB,Lnxt)).join(''); }
+  if(sc==='cohort' && P.hasPRO){ h+=`<tr class="grp"><td colspan="5">SES PRO</td></tr><tr><td>Faglig integration</td><td class="num">\u2014</td><td class="num">\u2014</td><td class="num"><span class="mini">ikke v\u00e6rdisat endnu</span></td><td class="num">\u2014</td></tr>`; }
+  $('ceaBody').innerHTML=h;
+  let note='<b>Omkostning pr. enhed</b> tilskriver det enkelte produkts \u00e5rlige licens til den enkelte effekt; <b>business case</b> = v\u00e6rdi \u00f7 omkostning (>1 betyder at effekten alene d\u00e6kker licensen). Posterne er alternative n\u00e6vnere, ikke additive.';
+  if(disse>0) note+=' Udbredelsesudgiften ('+kr(disse)+'/\u00e5r) er en f\u00e6lles implementeringsudgift oven i licensen; den indg\u00e5r i samlet \u00e5rlig udgift, ikke i omkostning pr. enhed.';
+  $('ceaNote').innerHTML=note;
+  if(P.ceaSumShown){ if($('ceaSumText')) $('ceaSumText').textContent=ceaSummaryText(P); if($('ceaSummary')) show('ceaSummary',true); }
+}
+
+const ESTB0=3.5847,ESTB1=-0.135;
+const ESTRES=[[10,-0.6394],[25,-0.3695],[50,0.0618],[75,0.3402],[90,0.6265]];
+const ESTUE=[1.72,2.52,2.56,2.56,2.66,3.03,3.4,3.57,3.76,3.76,3.83,3.94,4.65,4.67,4.73,4.8,5,5.44,5.56,5.82,5.89,5.91,5.95,6.18,6.26,6.35,6.35,6.5,6.53,6.84,6.96,6.97,6.99,7.16,7.18,7.24,7.3,7.46,7.46,7.67,7.68,7.81,7.85,8.41,8.42,8.87,9.27,9.34,9.67,9.93,10.05,10.41,10.42,10.57,10.63,10.74,11.44,11.47,11.61,11.83,12.11,12.16,12.2,12.27,12.32,12.64,13.81,13.88,14.04,14.17,14.33,15.14,15.15,15.83,16.26,16.37,16.57,16.61,17.13,17.87,18.47,19.14,19.84,20.71,24.89,27.58,28.69,37.89];
+const ESTMAX=15.5;
+const ESTTRACKS=[
+ {id:'web',label:'1 · Permanent digital tilstedeværelse',hint:'Fast skabelontekst + kommunetilpasset video på hjemmesiden. Engangsopsætning.',opts:[['Nej',0],['Ja',1.5]]},
+ {id:'some',label:'2 · Løbende borgerrettet deling',hint:'Opslag på AULA / sociale medier via årshjulet. Eneste spor med frekvens.',opts:[['Ingen',0],['Lejlighedsvis',1.5],['Fast kvartalsvis',3],['Intensiv',4.5]]},
+ {id:'fysisk',label:'3 · Fysisk synlighed',hint:'Plakater, postkort og QR på skoler, biblioteker, sundheds- og lægehuse.',opts:[['Ingen',0],['Få steder',1],['Mange steder',2],['Bredt udrullet',3]]},
+ {id:'intern',label:'4 · Intern henvisningsmobilisering',hint:'E-mails til faggrupper: PPR, sundhedspleje, skoler, dagtilbud, familieafd.',opts:[['Ingen',0],['Udvalgte faggrupper',1.5],['Bredt på tværs',3]]},
+ {id:'pro',label:'5 · SES PRO faglig integration',hint:'Samtaler, gruppeforløb, opkvalificering — kræver PRO-licens.',opts:[['Ingen',0],['Delvist',1.5],['Fuldt integreret',2.5]]},
+ {id:'ledelse',label:'6 · Ledelses- & politisk forankring',hint:'Sikrer at de øvrige spor faktisk kører over tid.',opts:[['Nej',0],['Ja',1]]}
+];
+const fmtDa1=x=>x.toLocaleString('da-DK',{minimumFractionDigits:1,maximumFractionDigits:1});
+function estInterpLog(p){ p=Math.max(10,Math.min(90,p)); for(let i=0;i<ESTRES.length-1;i++){const [p0,v0]=ESTRES[i],[p1,v1]=ESTRES[i+1]; if(p<=p1) return v0+(v1-v0)*(p-p0)/(p1-p0);} return ESTRES[ESTRES.length-1][1]; }
+const estMultFromP=p=>Math.exp(estInterpLog(p));
+const estPFromA=a=>10+80*(1-Math.pow(1-a,1.5));
+const estBaseUe=pop=>Math.exp(ESTB0+ESTB1*Math.log(pop));
+function estPctl(arr,p){const a=[...arr].sort((x,y)=>x-y);const i=(a.length-1)*p/100;const lo=Math.floor(i),hi=Math.ceil(i);return lo===hi?a[lo]:a[lo]+(a[hi]-a[lo])*(i-lo);}
+function estCompute(P){
+  const pop=P.nInhab||0;
+  const pts=ESTTRACKS.reduce((s,tr)=>s+(P.strat[tr.id]||0),0);
+  const a=pts/ESTMAX; const p=estPFromA(a); const mult=estMultFromP(p);
+  const bUe=estBaseUe(pop||1); const ue=bUe*mult;
+  const perMo=ue*pop/1e5, perYr=perMo*12;
+  const pLo=Math.max(10,p-15),pHi=Math.min(90,p+15);
+  const moLo=bUe*estMultFromP(pLo)*pop/1e5, moHi=bUe*estMultFromP(pHi)*pop/1e5;
+  return {pts,a,p,mult,bUe,ue,perMo,perYr,moLo,moHi};
+}
+function buildEstimator(){
+  const tr=$('estTracks'); tr.innerHTML='';
+  ESTTRACKS.forEach(t=>{
+    const f=document.createElement('div'); f.className='est-strat';
+    f.innerHTML='<div class="es-main"><div class="es-name">'+t.label+'</div><div class="es-desc">'+t.hint+'</div></div>';
+    const seg=document.createElement('div'); seg.className='seg seg-sm es-seg';
+    t.opts.forEach(([lab,val])=>{const b=document.createElement('button');b.type='button';b.textContent=lab;b.setAttribute('data-v',val);b.setAttribute('aria-pressed',P.strat[t.id]===val);b.onclick=()=>{P.strat[t.id]=val;P.estComputed=false;render();};seg.appendChild(b);});
+    const ctrl=document.createElement('div'); ctrl.className='es-ctrl'; ctrl.appendChild(seg);
+    f.appendChild(ctrl); tr.appendChild(f);
+  });
+}
+function syncEstControls(){
+  const tr=$('estTracks'); if(tr)[...tr.children].forEach((f,i)=>{const id=ESTTRACKS[i].id;[...f.querySelectorAll('button')].forEach(b=>b.setAttribute('aria-pressed',Number(b.getAttribute('data-v'))===P.strat[id]));});
+}
+function drawEstPeers(ue){
+  const arr=ESTUE; const med=estPctl(arr,50),p90=estPctl(arr,90);
+  const W=600,padL=14,padR=14,y=58;
+  const xmax=Math.max(Math.ceil(Math.max(...arr,ue)*1.04),12);
+  const X=v=>padL+(W-padL-padR)*(v/xmax);
+  let s='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/>';
+  arr.forEach(v=>{s+='<line x1="'+X(v).toFixed(1)+'" y1="'+(y-8)+'" x2="'+X(v).toFixed(1)+'" y2="'+(y+8)+'" stroke="var(--muted)" stroke-width="1.4" opacity="0.4"/>';});
+  [[med,'Median'],[p90,'P90']].forEach(([v,t])=>{s+='<line x1="'+X(v).toFixed(1)+'" y1="'+(y-13)+'" x2="'+X(v).toFixed(1)+'" y2="'+(y+13)+'" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="2 2"/>';s+='<text x="'+X(v).toFixed(1)+'" y="'+(y+27)+'" text-anchor="middle" font-size="10.5" fill="var(--muted)">'+t+' '+fmtDa1(v)+'</text>';});
+  const mx=X(ue);
+  s+='<polygon points="'+(mx-7).toFixed(1)+','+(y-20)+' '+(mx+7).toFixed(1)+','+(y-20)+' '+mx.toFixed(1)+','+(y-9)+'" fill="var(--value)"/>';
+  s+='<line x1="'+mx.toFixed(1)+'" y1="'+(y-9)+'" x2="'+mx.toFixed(1)+'" y2="'+(y+11)+'" stroke="var(--value)" stroke-width="2.4"/>';
+  s+='<text x="'+mx.toFixed(1)+'" y="'+(y-25)+'" text-anchor="middle" font-size="11.5" font-weight="800" fill="var(--value)">'+fmtDa1(ue)+'</text>';
+  s+='<text x="'+padL+'" y="'+(y+27)+'" font-size="10" fill="var(--muted)">0</text>';
+  s+='<text x="'+(W-padR)+'" y="'+(y+27)+'" text-anchor="end" font-size="10" fill="var(--muted)">'+xmax+'</text>';
+  return s;
+}
+function renderEstimate(P){
+  syncEstControls();
+  const fmt=(x,d)=>x.toLocaleString('da-DK',{minimumFractionDigits:d,maximumFractionDigits:d});
+  if(!P.nInhab){ $('estResult').innerHTML='<div class="er-empty">Vælg en kommune i trin 1 ovenfor — så udfylder vi indbyggertallet automatisk.</div>'; return; }
+  if(!P.estComputed){ $('estResult').innerHTML='<div class="er-cta-msg">Klar. Vælg jeres udbredelsesindsats ovenfor, og tryk <b>Beregn</b> for at se forventede forældre og børn.</div>'; return; }
+  const C=estCompute(P);
+  const arr=ESTUE; const pos=arr.filter(v=>v<C.ue).length/arr.length*100;
+  const adults=Math.round(C.perYr), nxt=Math.round(C.perYr*P.nxtRatio);
+  $('estResult').innerHTML=
+    '<div class="er-result-head">Forventede nye brugere om året</div>'
+    +'<div class="er-headline">'
+      +'<div class="er-hn"><div class="er-hn-lab">Forældre · SES ONE</div><div class="er-hn-num">'+fmt(adults,0)+'</div><div class="er-hn-unit">brugere / år</div></div>'
+      +'<div class="er-hn"><div class="er-hn-lab">Børn 6-17 · SES NXT</div><div class="er-hn-num">'+fmt(nxt,0)+'</div><div class="er-hn-unit">brugere / år</div></div>'
+    +'</div>'
+    +'<div class="er-quick">≈ <b>'+(C.perMo<10?fmt(C.perMo,1):fmt(Math.round(C.perMo),0))+'</b> nye forældre/md · realistisk spænd <b>'+fmt(C.moLo<10?+C.moLo.toFixed(1):Math.round(C.moLo),C.moLo<10?1:0)+'–'+fmt(C.moHi<10?+C.moHi.toFixed(1):Math.round(C.moHi),C.moHi<10?1:0)+'</b>/md · basislinje <b>'+fmt(C.bUe,1)+'</b>/100k/md.</div>'
+    +'<details class="er-more"><summary>Indsatsniveau og placering blandt kommuner<span class="chev">&rsaquo;</span></summary><div class="er-more-body">'
+      +'<div class="er-gauge"><div class="er-grow"><span class="er-glab">Indsatsniveau</span><span class="er-gpct">≈ P'+Math.round(C.p)+' · faktor ×'+fmt(C.mult,2)+'</span></div><div class="er-gtrack"><div class="er-gfill" style="width:'+(C.a*100).toFixed(1)+'%"></div></div><div class="er-gscale"><span>Minimal</span><span>Gennemsnit</span><span>Maksimal</span></div></div>'
+      +'<div class="er-peers"><div class="er-plabel">Placering blandt etablerede kommuner</div><svg viewBox="0 0 600 96" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Fordeling af etablerede kommuner med estimatet markeret">'+drawEstPeers(C.ue)+'</svg><p class="er-pcap">Jeres størrelsesjusterede estimat (≈'+fmt(C.ue,1)+'/100k/md) blandt de '+arr.length+' etablerede nordiske kommuners faktiske rater — over ~'+Math.round(pos)+' % af dem.</p></div>'
+    +'</div></details>';
+}
+function buildMethodCards(){
+  $('methodCards').innerHTML=METHODS.map(m=>{
+    const can=m.can.map(x=>'<li>'+x+'</li>').join('');
+    const cannot=m.cannot.map(x=>'<li>'+x+'</li>').join('');
+    const status=m.status?'<span class="mc-status '+m.status+'">'+m.status+'</span>':'';
+    return '<button class="mcard" id="mc-'+m.id+'" type="button">'
+      +'<div class="mc-top"><span class="mc-name">'+m.name+'</span>'+status+'</div>'
+      +'<div class="mc-method">'+m.method+'</div>'
+      +'<div class="mc-can"><span class="mc-lbl ok">Kan vise</span><ul>'+can+'</ul></div>'
+      +'<div class="mc-cannot"><span class="mc-lbl no">Kan ikke vise</span><ul>'+cannot+'</ul></div>'
+      +'<div class="mc-out">'+m.output+'</div>'
+      +'<div class="mc-note">'+m.note+'</div>'
+      +'<span class="mc-pick"><span class="mc-pick-on">Valgt ✓</span><span class="mc-pick-off">Vælg</span></span>'
+      +'</button>';
+  }).join('');
+  METHODS.forEach(m=>{ $('mc-'+m.id).addEventListener('click',()=>{P.sel[m.id]=!P.sel[m.id];render();}); });
+}
+function buildLog(P,R,sel,ovs){
+  const pct=v=>(v*100).toLocaleString('da-DK')+' %';
+  const sv=P.schoolValue===41600?'Netto 41.600 kr. (base case)':(P.schoolValue===75000?'Brutto 75.000 kr. (scenarie)':kr(P.schoolValue));
+  const persp=PERSP_LABEL[P.perspective]||'Tilpasset';
+  const w='kommune '+pct(P.wKom)+', region '+pct(P.wReg)+', stat '+pct(P.wStat)+', arbejdsplads '+pct(P.wArb)+', borger '+pct(P.wPriv);
+  const row=(k,v)=>'<tr><td>'+k+'</td><td>'+v+'</td></tr>';
+  const adjTxt={warn:'Ingen justering (advarsel vist)',exclude:'Ekskluderet: langtidssygefravær + indkomst',primary:'Primær post: '+P.adjPrimary,haircut:'Haircut '+pct(P.adjHaircut)+' på sekundære poster',parallel:'Kun parallelle (ingen sum)'}[P.adjMode];
+  let h='<tr class="grp"><td colspan="2">Metodevalg</td></tr>'
+   +row('Valgte metoder',sel.length?sel.map(m=>m.name).join(', '):'ingen')
+   +row('Overlap detekteret',ovs.length?ovs.length+' (se afsnit D)':'ingen');
+  if(P.sel.produktion) h+=row('Dobbelttællings-justering',adjTxt);
+  const fagTot=FAGGRUPPER.reduce((a,f)=>a+(P.fag[f.id]||0),0);
+  const fagDet=FAGGRUPPER.filter(f=>P.fag[f.id]>0).map(f=>f.en+' '+P.fag[f.id]).join(', ');
+  const num=v=>(v!=null&&v!=='')?Number(v).toLocaleString('da-DK'):'—';
+  h+='<tr class="grp"><td colspan="2">Populations- &amp; adgangslag</td></tr>'
+   +row('Forældre / børn (i beregningen)',P.nF+' / '+P.nB)
+   +row('Kommune',P.kommune||'ikke valgt')
+   +row('Indbyggertal',num(P.nInhab))
+   +row('Kommunalt ansatte (kommunen som arbejdsplads)',num(P.nMunEmp)+(P.nMunEmp?' · kommende modul':''))
+   +row('Fagpersoner med adgang',fagTot?fagTot+' i alt'+(fagDet?' ('+fagDet+')':'')+' · afventer værdimodel':'ingen · afventer værdimodel');
+  if(P.userMode==='estimate'){
+    const C=estCompute(P);
+    const st=ESTTRACKS.filter(t=>P.strat[t.id]>0).map(t=>{const o=t.opts.find(o=>o[1]===P.strat[t.id]);return t.label.replace(/^\d+ · /,'')+(o?' ('+o[0]+')':'');});
+    h+='<tr class="grp"><td colspan="2">Brugerestimat · udbredelsesguide (datafittet)</td></tr>'
+     +row('Valgte spor',st.length?st.join(', '):'ingen valgt')
+     +row('Indsatsniveau','≈ P'+Math.round(C.p)+' · faktor ×'+C.mult.toFixed(2).replace('.',','))
+     +row('Basislinje',C.bUe.toFixed(1).replace('.',',')+' ONE-oprettelser/100k/md (gennemsnitlig kommune, '+(P.nInhab?P.nInhab.toLocaleString('da-DK'):'0')+' indb.)')
+     +row('Forventet','≈'+(C.perMo<10?C.perMo.toFixed(1):Math.round(C.perMo).toLocaleString('da-DK'))+' voksne ONE-brugere/md · '+Math.round(C.perYr).toLocaleString('da-DK')+'/år')
+     +row('NXT-børn (afledt)',Math.round(C.perYr*P.nxtRatio).toLocaleString('da-DK')+'/år (× '+String(P.nxtRatio).replace('.',',')+', ikke datafittet)')
+     +row('Datagrundlag','fittet på etablerede kommuner i udtræk af 107 nordiske kommuner; effort-spændet rummer også lokale forhold → scenarie-skøn');
+  }
+  h+='<tr class="grp"><td colspan="2">Perspektiv &amp; vægte (gælder økonomiske spor)</td></tr>'+row('Valgt perspektiv',persp)+row('Aktørvægte',w);
+  if(P.sel.budget) h+='<tr class="grp"><td colspan="2">Skolefravær · SØM</td></tr>'+row('Værdi pr. barn ud af bekymrende fravær',sv)+row('Andel børn ud af fravær',pct(P.schoolShare))+row('Fordeling kom/reg/stat',pct(P.sKom)+' / '+pct(P.sReg)+' / '+pct(P.sStat))+row('Tidsvindue','10 år');
+  if(P.sel.produktion) h+='<tr class="grp"><td colspan="2">Produktion &amp; arbejdsmarked</td></tr>'+row('Produktionsværdi pr. dag',kr(P.prod))+row('Skatte-/overførselssats',pct(P.tax))+row('Indkomstgevinst pr. forælder · 5 år',kr(P.income)+' (trend, p=.10)');
+  if(P.sel.qaly) h+='<tr class="grp"><td colspan="2">QALY (antagelse)</td></tr>'+row('QALY-værdi',kr(P.qaly))+row('Gevinst voksen / barn pr. år',String(P.adultGain).replace('.',',')+' / '+String(P.childGain).replace('.',','))+row('Varighed',P.years+' år')+row('Mapping','foreløbig antagelse; SF-6D for voksne undersøges senere');
+  if(P.sel.wellby) h+='<tr class="grp"><td colspan="2">WELLBY (scenarie)</td></tr>'+row('Antaget livstilfredshed-point voksen / barn',String(P.wbAdult).replace('.',',')+' / '+String(P.wbChild).replace('.',',')+' (barn mere eksplorativt)')+row('WELLBY-værdi pr. point-år',kr(P.wbValue))+row('Haircut',pct(P.wbHaircut))+row('Varighed',P.years+' år')+row('Anker','voksne: mental sundhed (SF-36 d=1,86) · børn: HRQoL (d=0,84)');
+  if(P.sel.cea){ const pr=[]; pr.push('ONE'+(P.licONE?' ('+kr(P.licONE)+')':'')); if(P.hasNXT)pr.push('NXT'+(P.licNXT?' ('+kr(P.licNXT)+')':'')); if(P.hasPRO)pr.push('PRO'+(P.licPRO?' ('+kr(P.licPRO)+')':'')); const tot=(P.licONE||0)+(P.hasNXT?(P.licNXT||0):0)+(P.hasPRO?(P.licPRO||0):0); const dis=(P.disseCost||0); h+='<tr class="grp"><td colspan="2">CEA · omkostninger</td></tr>'+row('Produkter (årlig licens)',pr.join(', '))+row('Udbredelse (kr./år)',dis>0?kr(dis):'ikke indtastet')+row('Samlet årlig udgift',(tot+dis)>0?kr(tot+dis):'ikke indtastet'); }
+  h+='<tr class="grp"><td colspan="2">Fælles grundlag</td></tr>'+row('Diskonteringsrente',pct(P.discount)+' · Finansministeriet (3,5 % år 0-35)')+row('Enhedspriser','SØM v3.4 (2025-priser)')+row('Effektstørrelser','SES ONE: RCT 12 mdr. + 5-års register · SES NXT: RCT 12 uger')+row('Statistisk usikkerhed','beskrevet i forskningen, ikke regnet ind');
+  return h;
+}
+const DOMAIN_FX={skole:['skole'],sundhed:['gp','psyk','hosp'],recept:['recepter'],sygedage:['sygedage'],langtid:['langtid'],indkomst:['indkomst'],kontant:['kontant'],somatik:['somatik','soevn','ambulant']};
+function isZeroedByAdj(domain,P){const ids=DOMAIN_FX[domain];if(!ids)return false;return ids.every(id=>adjFactor(id,P)===0);}
+function effectKr(domain,P){
+  const ids=DOMAIN_FX[domain]; if(!ids)return null;
+  const W={kom:P.wKom,reg:P.wReg,stat:P.wStat,arb:P.wArb,priv:P.wPriv}; let tot=0;
+  ids.forEach(id=>{const e=[...ONE,...NXT].find(x=>x.id===id);if(!e)return;const af=adjFactor(id,P);const v=ppActor(e,P);const rec=ONE.includes(e)?'F':'B';const cnt=rec==='F'?P.nF:P.nB;ACT.forEach(a=>tot+=(v[a]||0)*af*cnt*W[a]);});
+  return tot;
+}
+function scopeCard(m,R,P){
+  const cov=COVERAGE[m.id]; const inc=[],out=[]; const econ=(m.id==='budget'||m.id==='produktion');
+  EFFECTS.forEach(e=>{ const st=cov[e.id];
+    if(st==='I'||st==='O'){ if(isZeroedByAdj(e.id,P)) out.push([e,'ekskluderet via justering','adj']); else inc.push([e,st]); }
+    else if(st==='A') out.push([e,'kræver antagelse','a']);
+    else if(st==='F') out.push([e,'fremtidigt modul','f']);
+    else out.push([e,'uden for metoden','x']);
+  });
+  const incLi=inc.map(([e,st])=>{let v='';if(econ){if(anyActor(P)){const k=effectKr(e.id,P);if(k!=null)v='<span class="sc-kr num">'+kr(k)+'</span>';}else v='<span class="sc-hint">vælg aktør</span>';}const ov=st==='O'?' <span class="sc-tag ov">overlapper</span>':'';return '<li><span class="sc-e">'+e.label+ov+'</span>'+v+'</li>';}).join('');
+  const outLi=out.map(([e,reason,cls])=>'<li><span class="sc-e">'+e.label+'</span><span class="sc-tag '+cls+'">'+reason+'</span></li>').join('');
+  let tot='';
+  if(econ) tot=anyActor(P)?'<span class="sc-total num">'+kr(m.id==='budget'?R.budget.grand:R.prod.grand)+'</span>':'<span class="sc-total-hint">vælg aktør i brugerlaget</span>';
+  else if(m.id==='qaly') tot='<span class="sc-total num">'+kr(R.qaly.grand)+'</span>';
+  else if(m.id==='wellby'&&R.wb) tot='<span class="sc-total num">'+krMio(R.wb.cohortKr)+'</span>';
+  const trk={budget:'b',produktion:'p',wellby:'w',qaly:'q'}[m.id]||'';
+  return '<div class="scope-card">'
+    +'<div class="scope-h"><span class="trk '+trk+'"></span><b>'+m.name+'</b><span class="scope-method">'+m.method+'</span>'+tot+'</div>'
+    +'<div class="scope-cols">'
+    +'<div class="scope-col scope-in"><div class="scope-lbl ok">Med i beregningen</div><ul class="sc-list">'+(incLi||'<li class="sc-none">ingen</li>')+'</ul></div>'
+    +'<div class="scope-col scope-out"><div class="scope-lbl no">Ikke med i beregningen</div><ul class="sc-list">'+(outLi||'<li class="sc-none">ingen</li>')+'</ul></div>'
+    +'</div></div>';
+}
+function scopeHTML(R,P,sel){
+  return '<p class="scope-intro">Du har <b>ikke</b> begrænset dig tematisk — alle SES Familys dokumenterede effekter står nedenfor. Den valgte beregningsmodel afgør kun, hvilke af dem der kan omsættes til <i>dens</i> tal. Resten er stadig dokumenteret og reel — bare uden for denne metode.</p>'
+    +sel.map(m=>scopeCard(m,R,P)).join('');
+}
+function render(){
+  const sel=selList(P); const any=sel.length>0;
+  if(P.userMode==='estimate'){ if(P.estComputed){ const C=estCompute(P); P.nF=Math.round(C.perYr); P.nB=Math.round(C.perYr*P.nxtRatio); } else { P.nF=0; P.nB=0; } }
+  if($('komContext')){ const kd=KOMMUNEDATA[P.kommune]; $('komContext').innerHTML = kd ? 'SES anslår en målgruppe i '+P.kommune+' på ca. <b>'+kd[1].toLocaleString('da-DK')+'</b> voksne og <b>'+kd[2].toLocaleString('da-DK')+'</b> børn berørt af skilsmisse/samlivsbrud — den adresserbare pulje, ikke forventede brugere.' : ''; }
+  if($('umManual')){ $('umManual').setAttribute('aria-pressed',P.userMode==='manual'); $('umEstimate').setAttribute('aria-pressed',P.userMode==='estimate'); }
+  show('userManual',P.userMode==='manual'); show('userEstimate',P.userMode==='estimate');
+  if(P.userMode==='manual'){['nF','nB'].forEach(id=>{const el=$(id);if(el&&el!==document.activeElement&&el.value!=String(P[id]))el.value=P[id];});}
+  if($('estCalc')){ show('estCalc',P.userMode==='estimate'&&!P.estComputed); $('estCalc').disabled=!P.nInhab; }
+  if(P.userMode==='estimate'&&$('estResult')) renderEstimate(P);
+  METHODS.forEach(m=>{ const el=$('mc-'+m.id); if(el) el.classList.toggle('active',!!P.sel[m.id]); });
+  show('emptyState',!any);
+  ['scopePanel','coveragePanel','ccaPanel','logPanel'].forEach(id=>show(id,any));
+  const R=compute(P);
+  if(!any){ ['timePanel','actorPanel','ceaLayer','overlapPanel'].forEach(id=>show(id,false)); return; }
+  $('scopeBody').innerHTML=scopeHTML(R,P,sel);
+  $('coverageBody').innerHTML=coverageHTML(sel);
+  const ovs=activeOverlaps(P);
+  show('overlapPanel',ovs.length>0);
+  if(ovs.length>0) $('overlapBody').innerHTML=overlapHTML(ovs);
+  show('adjControls',!!P.sel.produktion);
+  $('ccaBody').innerHTML=ccaHTML(R,P,sel);
+  const econSel=P.sel.budget||P.sel.produktion; const aA=anyActor(P);
+  show('timePanel',econSel&&aA); show('actorPanel',econSel&&aA);
+  if(econSel&&aA){ renderTime(R,P); renderActor(R,P); }
+  show('ceaLayer',any);
+  if(any) renderCEA(P);
+  $('logBody').innerHTML=buildLog(P,R,sel,ovs);
+}
+
+// build effects table once
+const TRACKLAB={budget:'Budget',produktion:'Produktion',qaly:'Velfærd'};
+const TRACKCLS={budget:'l1',produktion:'l2',qaly:'l3'};
+$('effRows').innerHTML=[...ONE,...NXT].map(e=>`<tr><td>${e.label}</td><td>${e.basis}</td><td><span class="tag ${TRACKCLS[e.track]}">${TRACKLAB[e.track]}</span></td></tr>`).join('')
+  +`<tr><td>Mental sundhed & trivsel (voksne)</td><td>SF-36 mental (d≤1,86), stress (d≤2,2), depression (d≈1,7)</td><td><span class="tag l3">Velfærd</span></td></tr>`
+  +`<tr><td>Livskvalitet (børn)</td><td>HRQoL d=0,84; QoL d=0,58</td><td><span class="tag l3">Velfærd</span></td></tr>`;
+
+// ---- evidence layer ----
+const EVIDENCE={
+ one:{title:'SES ONE · voksne / forældre',basis:'12-mdr. RCT + 5-års registeropfølgning',
+   sub:'Hjælper primært den voksne selv gennem skilsmissens psykiske belastning, med afledte spor i sygefravær og sundhedsforbrug.',
+   domains:[
+    {name:'Mental sundhed',tag:'stor effekt',tagcls:'strong',items:[
+      {l:'Stress',d:2.21},{l:'Mental funktion',d:1.86},{l:'Depression',d:1.75},{l:'Angst',d:1.00},{l:'Somatisering',d:0.78}]},
+    {name:'Konflikt & fjendtlighed',tag:'robust',tagcls:'ok',items:[{l:'Generaliseret fjendtlighed (justeret)',d:0.26}]},
+    {name:'Fysisk helbred',tag:'lille effekt',tagcls:'soft',items:[{l:'Fysisk funktion',d:0.20}]},
+    {name:'Sygefravær & arbejdsmarked',tag:'blandet',tagcls:'mix',items:[
+      {l:'Færre sygedage, år 1',d:0.26},{l:'Højere indkomst, 5 år (+5,2 %)',trend:true},{l:'Færre langtidssygefraværsuger, 5 år',trend:true}]},
+    {name:'Forbrug af sundhedsydelser (5 år)',tag:'robust',tagcls:'ok',items:[
+      {l:'Færre psykofarmaka-recepter (−28 %)',chip:'IRR 0,72'},{l:'Lavere brug af almen praksis (år 2-3)',chip:'OR 0,6–0,7'},{l:'Færre hospitalsindlæggelser (år 4)',chip:'OR 0,68'}]},
+   ]},
+ nxt:{title:'SES NXT · børn og unge 6-17 år',basis:'RCT med opfølgning ved 4 og 12 uger',
+   sub:'Hjælper barnet bredt — psykisk trivsel, skolegang og livskvalitet — og dæmper den forældrekonflikt, barnet er udsat for.',
+   domains:[
+    {name:'Mental sundhed & trivsel',tag:'robust · bredt',tagcls:'ok',items:[
+      {l:'Samlet vanskelighedsniveau',d:0.71},{l:'Følelsesmæssige symptomer',d:0.66},{l:'Hverdagsbelastning (impact)',d:0.66},{l:'Adfærdsproblemer',d:0.54},{l:'Problemer med jævnaldrende',d:0.49},{l:'Hyperaktivitet / opmærksomhed',d:0.47},{l:'Prosocial adfærd',d:0.46}]},
+    {name:'Skolefravær & skolefunktion',tag:'stor effekt',tagcls:'strong',items:[
+      {l:'Lettere at komme i og blive i skole',d:0.79},{l:'Problematisk fravær: 55,7 % → 15,9 %',chip:'≈ halveret'}]},
+    {name:'Forældrekonflikt (set fra barnet)',tag:'robust',tagcls:'ok',items:[
+      {l:'Oplevet konflikt (ung-rapporteret)',d:0.67},{l:'Oplevet konflikt (forælder-rapporteret)',d:0.62}]},
+    {name:'Somatisk trivsel, søvn & krop',tag:'robust',tagcls:'ok',items:[
+      {l:'Færre somatiske klager',chip:'OR 4,18'},{l:'Færre indsovningsproblemer',chip:'OR 3,99'},{l:'Mindre ekstrem kropsopfattelse',chip:'OR 2,59'}]},
+    {name:'Livskvalitet',tag:'stor effekt',tagcls:'strong',items:[
+      {l:'Sundhedsrelateret livskvalitet (HRQoL)',d:0.84},{l:'Generel livskvalitet',d:0.58}]},
+   ]},
+};
+function dbar(d){
+  const max=2.4,pc=v=>Math.min(v,max)/max*100;
+  const col=d>=0.8?'#137A63':d>=0.5?'#3F9079':'#86BBAA';
+  const ticks=[0.2,0.5,0.8].map(t=>`<span class="tick" style="left:${pc(t)}%"></span>`).join('');
+  return `<div class="dscale"><div class="fill" style="width:${pc(d)}%;background:${col}"></div>${ticks}</div>`;
+}
+function buildEvidence(){
+  const card=(iv,cls)=>`<div class="ev-card ${cls}">
+    <h3>${iv.title}</h3><div class="ev-basis">${iv.basis}</div><p class="ev-sub">${iv.sub}</p>
+    <div class="ev-legend">Cohen's d — søjle markeret ved 0,2 (lille) · 0,5 (medium) · 0,8 (stor)</div>
+    ${iv.domains.map(dm=>`<div class="domain"><div class="domain-h"><span class="dn">${dm.name}</span><span class="etag ${dm.tagcls}">${dm.tag}</span></div>
+      ${dm.items.map(it=>`<div class="eff"><div class="el"><span>${it.l}</span>${it.d!==undefined?`<span class="dv">d=${it.d.toFixed(2).replace('.',',')}</span>`:''}</div>${it.d!==undefined?dbar(it.d):(it.trend?'<span class="chip trend">trend</span>':`<span class="chip">${it.chip}</span>`)}</div>`).join('')}
+    </div>`).join('')}
+  </div>`;
+  document.getElementById('evGrid').innerHTML=card(EVIDENCE.one,'one')+card(EVIDENCE.nxt,'nxt');
+}
+buildEvidence();
+
+// ---- who-benefits bridge ----
+const BRIDGE={
+ cols:[['Borger','#137A63'],['Kommune','#2D6A9F'],['Region','#5BA3B8'],['Stat','#1F3D6B'],['Arbejdsplads','#C99700']],
+ groups:[
+  {iv:'SES ONE · voksne',rows:[
+    {l:'Mental sundhed',m:['p','a','a','','a']},
+    {l:'Konflikt & fjendtlighed',m:['p','a','','','']},
+    {l:'Sygefravær & arbejdsmarked',m:['a','a','','a','p']},
+    {l:'Forbrug af sundhedsydelser',m:['','a','p','','']},
+    {l:'Overførsler (kontanthjælp m.v.)',m:['','p','','a','']},
+  ]},
+  {iv:'SES NXT · børn',rows:[
+    {l:'Trivsel & mental sundhed',m:['p','a','','','']},
+    {l:'Skolefravær & skolefunktion',m:['p','p','','a','']},
+    {l:'Forældrekonflikt (set fra barnet)',m:['p','a','','','']},
+    {l:'Somatisk trivsel & søvn',m:['p','a','a','','']},
+    {l:'Livskvalitet',m:['p','','','','']},
+  ]},
+  {iv:'Systemeffekter · kommunen & omgivelserne (ikke direkte prissat i RCT\'erne)',rows:[
+    {l:'Produktivitetstab / presenteeism',m:['s','','','','s']},
+    {l:'Skolekonflikt & lærertid',m:['','s','','','']},
+    {l:'Underretninger & familieafdeling',m:['','s','','','']},
+    {l:'Familieretshus & samværssager',m:['','','','s','']},
+    {l:'Specialundervisning & PPR',m:['','s','','','']},
+    {l:'Langsigtede børneudfald (uddannelse, NEET)',m:['s','s','','s','']},
+  ]},
+ ],
+};
+function buildBridge(){
+  const head=`<tr><th>Effekt</th>${BRIDGE.cols.map(c=>`<th>${c[0]}</th>`).join('')}</tr>`;
+  const cell=(mk,i)=>{
+    if(mk==='p')return `<td><span class="dotp" style="background:${BRIDGE.cols[i][1]}"></span></td>`;
+    if(mk==='a')return `<td><span class="dota"></span></td>`;
+    if(mk==='s')return `<td><span class="dots"></span></td>`;
+    return '<td></td>';
+  };
+  const body=BRIDGE.groups.map(g=>`<tr class="grp"><td colspan="${BRIDGE.cols.length+1}">${g.iv}</td></tr>`+
+    g.rows.map(r=>`<tr><td>${r.l}</td>${r.m.map(cell).join('')}</tr>`).join('')).join('');
+  document.getElementById('whoMatrix').innerHTML=`<table class="whomatrix"><thead>${head}</thead><tbody>${body}</tbody></table>`;
+}
+buildBridge();
+
+// ---- methods appendix (alle effekter, alle tre studier) ----
+const APPENDIX=[
+ {study:'SES ONE · 12-måneders RCT',items:[
+  ['Stress','Perceived Stress Scale (PSS)','justeret d op til 2,21','3/6/12 mdr.','Cipric et al. 2020'],
+  ['Mental & fysisk helbred (+ 8 subdomæner)','SF-36','d=1,86 mental / 0,20 fysisk; domæne-range 0,19–2,29','3/6/12 mdr.','Sander et al. 2020'],
+  ['Depression','SCL-90-R Depression','justeret d=1,75 (12 mdr.)','3/6/12 mdr.','Hald et al. 2020'],
+  ['Angst','SCL-90-R Anxiety','d=1,00','3/6/12 mdr.','Hald et al. 2020'],
+  ['Somatisering','SCL-90-R Somatization','d=0,78','3/6/12 mdr.','Hald et al. 2020'],
+  ['Fjendtlighed','SCL-90-R Hostility','justeret d=0,26 (12 mdr.)','6/12 mdr.','Øverup et al. 2020'],
+  ['Sygedage','Selvrapporterede sygedage','d=0,26; 5,82 færre dage','12 mdr.','Sander et al. 2024'],
+ ]},
+ {study:'SES ONE · 5-års registeropfølgning',items:[
+  ['Psykofarmaka','Register: ATC N05 + N06A (lægemiddelstatistik)','IRR=0,72 (−28 %)','5 år','Hald, Fallesen et al. 2025 (JMIR)'],
+  ['Primærsektorbrug (GP, speciallæge, psykolog)','Register (sygesikring)','OR=0,62 (år 2) / 0,73 (år 3)','år 2-3','JMIR 2025'],
+  ['Hospitalsindlæggelse','Landspatientregisteret','OR=0,68 (år 4)','år 4','JMIR 2025'],
+  ['Arbejdsmarkedsindkomst','Indkomstregister','+5,21 % (p=.10 — trend)','5 år','Fallesen et al. 2026 (Family Transitions)'],
+  ['Langtidssygefravær','Register (sygedagpenge)','REC=0,87; −1,24 uger (p=.20); undergruppe IRR=0,78 (p=.02)','5 år','Fallesen et al. 2026'],
+  ['Kontanthjælp / overførsler','Register','REC=0,94; −2,51 uger (p=.48)','5 år','Fallesen et al. 2026'],
+ ]},
+ {study:'SES NXT · RCT (4 og 12 uger)',items:[
+  ['Samlet trivsel + subfacetter','SDQ (Total; Emotional, Conduct, Hyperactivity, Peer, Prosocial; Impact)','d=0,71 total; subfacetter 0,46–0,66','12 uger','Hald et al. 2026 (npj Digital Medicine)'],
+  ['Selvoplevet problemreduktion','SDQ perceived change item','d=0,97','12 uger','npj Digital Medicine'],
+  ['Forældrekonflikt (barn- og forælderrapporteret)','Divorce Conflict Scale (youth/parent report)','d=0,67 (ung) / 0,62 (forælder)','12 uger','Hald, Johnsen & Øverup 2026 (J Family Psychology)'],
+  ['Overgang ud/ind af høj konflikt','Single-item parent conflict transition','+53,1 pp ud / −10,4 pp ind','12 uger','Forthcoming (parent-level)'],
+  ['Skolefravær (fuldt/delvist)','Registrerede fraværsdage (60 skoledage)','≈ 49 % / 47 % lavere (χ²)','12 uger','Johnsen, Øverup & Hald (forthcoming)'],
+  ['Sværhedsgrad ved skolegang','Item-mål','d=0,79','12 uger','School attendance ms. (forthcoming)'],
+  ['Problematisk skolefravær','SAP-tærskel (>10 % fravær)','55,7 % → 15,9 % (χ²=112,87)','12 uger','forthcoming'],
+  ['Somatiske klager','Item (hovedpine/mavepine/kvalme)','OR=4,18','12 uger','Hald, Johnsen, Hald & Øverup 2026 (PLOS Digital Health)'],
+  ['Søvn / indsovning','Sleep latency item','OR=3,99','12 uger','PLOS Digital Health'],
+  ['Kropsopfattelse','Body-size perception item','OR=2,59','12 uger','PLOS Digital Health'],
+  ['Generel livskvalitet','QoML','d=0,58','12 uger','Hald & Øverup 2026 (Applied Research in Quality of Life)'],
+  ['Sundhedsrelateret livskvalitet','HRQoL (QoML)','d=0,84','12 uger','Applied Research in Quality of Life'],
+  ['Selvoplevet forbedring i livskvalitet','Item','T2 d=0,81 / T3 d=1,07','4/12 uger','Applied Research in Quality of Life'],
+ ]},
+];
+function buildMethods(){
+  const rows=APPENDIX.map(s=>`<tr class="grp"><td colspan="5">${s.study}</td></tr>`+
+    s.items.map(it=>`<tr><td>${it[0]}</td><td>${it[1]}</td><td>${it[2]}</td><td>${it[3]}</td><td>${it[4]}</td></tr>`).join('')).join('');
+  document.getElementById('methodAppendix').innerHTML=`<table class="appx"><thead><tr><th>Effekt / konstrukt</th><th>Instrument / datakilde</th><th>Effektmål</th><th>Tidspunkt</th><th>Studie</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+buildMethods();
+
+// ---- wiring ----
+function setNum(id,key,parse){ const el=$(id); el.addEventListener('input',()=>{const v=parse(el.value);if(!isNaN(v)){P[key]=v;render();}}); }
+setNum('nF','nF',v=>Math.max(0,parseInt(v)||0));
+setNum('nB','nB',v=>Math.max(0,parseInt(v)||0));
+setNum('prod','prod',v=>parseFloat(v));
+setNum('tax','tax',v=>Math.min(1,Math.max(0,parseFloat(v))));
+setNum('income','income',v=>parseFloat(v));
+setNum('share','schoolShare',v=>Math.min(1,Math.max(0,parseFloat(v))));
+setNum('qaly','qaly',v=>parseFloat(v));
+setNum('ag','adultGain',v=>parseFloat(v));
+setNum('cg','childGain',v=>parseFloat(v));
+setNum('yrs','years',v=>Math.max(1,parseInt(v)||1));
+['hasNXT','hasPRO'].forEach(id=>{ $(id).addEventListener('change',()=>{P[id]=$(id).checked;P.ceaComputed=false;render();}); });
+['licONE','licNXT','licPRO','disseCost'].forEach(id=>{ $(id).addEventListener('input',()=>{const v=$(id).value;P[id]=(v===''||isNaN(parseFloat(v)))?null:Math.max(0,parseFloat(v));P.ceaComputed=false;render();}); });
+if($('ceaCalc')) $('ceaCalc').addEventListener('click',()=>{ P.ceaComputed=true; render(); });
+['cohort','adult','child'].forEach(k=>{ const b=$('ceaScope-'+k); if(b) b.addEventListener('click',()=>{ P.ceaScope=k; render(); }); });
+if($('ceaSumBtn')) $('ceaSumBtn').addEventListener('click',()=>{ P.ceaSumShown=true; if($('ceaSumText')) $('ceaSumText').textContent=ceaSummaryText(P); if($('ceaSummary')) show('ceaSummary',true); });
+if($('ceaSumCopy')) $('ceaSumCopy').addEventListener('click',()=>{ const t=$('ceaSumText').textContent; if(navigator.clipboard) navigator.clipboard.writeText(t); const b=$('ceaSumCopy'),o=b.textContent; b.textContent='Kopieret'; setTimeout(()=>{b.textContent=o;},1400); });
+
+$('disc').addEventListener('input',()=>{const v=parseFloat($('disc').value);if(!isNaN(v)){P.discount=Math.max(0,v/100);render();}});
+setNum('wbAdult','wbAdult',v=>Math.max(0,parseFloat(v)));
+setNum('wbChild','wbChild',v=>Math.max(0,parseFloat(v)));
+setNum('wbValue','wbValue',v=>Math.max(0,parseFloat(v)));
+setNum('wbHaircut','wbHaircut',v=>Math.min(1,Math.max(0,parseFloat(v))));
+$('nxtRatio').addEventListener('input',()=>{const v=parseFloat($('nxtRatio').value);P.nxtRatio=isNaN(v)?0:Math.max(0,Math.min(3,v));P.estComputed=false;render();});
+document.querySelectorAll('input[name=adj]').forEach(r=>r.addEventListener('change',()=>{if(r.checked){P.adjMode=r.value;render();}}));
+$('adjPrimary').addEventListener('change',()=>{P.adjPrimary=$('adjPrimary').value;render();});
+$('adjHaircut').addEventListener('input',()=>{const v=parseFloat($('adjHaircut').value);if(!isNaN(v)){P.adjHaircut=Math.min(1,Math.max(0,v/100));render();}});
+buildMethodCards();
+buildContextInputs();
+$('kommune').addEventListener('change',()=>{P.kommune=$('kommune').value;const d=KOMMUNEDATA[P.kommune];if(d){P.nInhab=d[0];$('nInhab').value=d[0];}P.estComputed=false;render();});
+['nInhab','nMunEmp'].forEach(id=>{ $(id).addEventListener('input',()=>{const v=$(id).value;P[id]=v===''?null:Math.max(0,parseInt(v)||0);if(id==='nInhab')P.estComputed=false;render();}); });
+$('umManual').addEventListener('click',()=>{P.userMode='manual';render();});
+$('umEstimate').addEventListener('click',()=>{P.userMode='estimate';render();});
+buildEstimator();
+$('estCalc').addEventListener('click',()=>{ if(P.nInhab){ P.estComputed=true; render(); } });
+
+$('sBrutto').addEventListener('click',()=>{P.schoolValue=75000;$('sBrutto').setAttribute('aria-pressed',true);$('sNetto').setAttribute('aria-pressed',false);render();});
+$('sNetto').addEventListener('click',()=>{P.schoolValue=41600;$('sNetto').setAttribute('aria-pressed',true);$('sBrutto').setAttribute('aria-pressed',false);render();});
+
+buildPerspControls();
+
+function syncInputs(){
+  $('nF').value=P.nF; $('nB').value=P.nB; $('prod').value=P.prod; $('tax').value=P.tax;
+  $('income').value=P.income; $('share').value=P.schoolShare; $('qaly').value=P.qaly;
+  $('ag').value=P.adultGain; $('cg').value=P.childGain; $('yrs').value=P.years;
+  $('hasNXT').checked=P.hasNXT; $('hasPRO').checked=P.hasPRO; $('licONE').value=P.licONE==null?'':P.licONE; $('licNXT').value=P.licNXT==null?'':P.licNXT; $('licPRO').value=P.licPRO==null?'':P.licPRO; $('disseCost').value=P.disseCost==null?'':P.disseCost;
+  $('disc').value=(P.discount*100).toLocaleString('en-US');
+  $('wbAdult').value=P.wbAdult; $('wbChild').value=P.wbChild; $('wbValue').value=P.wbValue; $('wbHaircut').value=P.wbHaircut;
+  $('adjPrimary').value=P.adjPrimary; $('adjHaircut').value=Math.round(P.adjHaircut*100);
+  document.querySelectorAll('input[name=adj]').forEach(r=>{r.checked=(r.value===P.adjMode);});
+  $('nP').value=P.nP; $('kommune').value=P.kommune; $('nInhab').value=P.nInhab==null?'':P.nInhab; $('nMunEmp').value=P.nMunEmp==null?'':P.nMunEmp;
+  $('nxtRatio').value=P.nxtRatio;
+  FAGGRUPPER.forEach(f=>{const el=$('fg-'+f.id);if(el)el.value=P.fag[f.id]||0;});
+  $('sBrutto').setAttribute('aria-pressed',P.schoolValue===75000); $('sNetto').setAttribute('aria-pressed',P.schoolValue===41600);
+  syncPersp();
+}
+$('reset').addEventListener('click',()=>{P=JSON.parse(JSON.stringify(DEFAULTS));syncInputs();render();});
+
+syncInputs(); render();
+</script>
+</body>
+</html>
