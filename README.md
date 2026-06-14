@@ -37,3 +37,4 @@ Dobbeltklik på `index.html`, eller åbn den i en browser. Intet andet kræves.
 ## Licens
 
 Vælg selv en licens til repositoryet (fx via GitHub: **Add file → Create new file → `LICENSE`**). Indtil da betragtes indholdet som ophavsretligt beskyttet af rettighedshaver.
+
