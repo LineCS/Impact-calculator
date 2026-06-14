@@ -29,12 +29,13 @@ h1,h2,h3{font-family:var(--disp);font-weight:600;letter-spacing:-.01em;margin:0}
 /* Header */
 header{padding:34px 0 22px}
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--value);font-weight:700}
-header h1{font-size:clamp(28px,4.4vw,44px);font-weight:700;line-height:1.04;margin:10px 0 12px;max-width:18ch}
+header h1{font-size:clamp(28px,4.4vw,44px);font-weight:700;line-height:1.04;margin:10px 0 12px;max-width:30ch}
 header p{color:var(--muted);max-width:62ch;margin:0;font-size:16px}
 .topbar{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
 .btn-reset{font-family:var(--mono);font-size:12px;letter-spacing:.04em;background:var(--card);border:1px solid var(--line);color:var(--muted);
   padding:9px 14px;border-radius:999px;cursor:pointer;transition:.15s;white-space:nowrap}
 .btn-reset:hover{border-color:var(--ink);color:var(--ink)}
+.page-reset{margin:28px 0 10px;padding-top:22px;border-top:1px solid var(--line2);display:flex;justify-content:center}
 
 /* Layout */
 .grid{display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start;padding-bottom:24px}
@@ -183,6 +184,7 @@ table.actors tr.total td{font-weight:700;border-top:1.5px solid var(--ink);borde
 .bridge .eyebrow{color:#8FE3CC}
 .bridge h2{font-size:20px;margin:8px 0 8px;color:#fff}
 .bridge p{color:#B9C6DD;margin:0;max-width:72ch;font-size:14px}
+.bridge p+p{margin-top:10px}
 /* Who-benefits bridge */
 .whobenefit{margin-bottom:8px}
 .whomatrix{width:100%;border-collapse:collapse;font-size:13px}
@@ -359,6 +361,9 @@ input[disabled]{background:#F1F3F6;color:var(--faint);cursor:not-allowed}
 .sc-total-hint{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint)}
 .sc-hint{font-family:var(--mono);font-size:10px;color:var(--faint)}
 .seg-sm button{padding:5px 10px;font-size:11.5px}
+#userModeSeg{flex-wrap:wrap;gap:6px;border:0;background:transparent;overflow:visible;border-radius:0;padding:0}
+#userModeSeg button{border:1px solid var(--line);border-radius:999px;background:#FBFCFD}
+#userModeSeg button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
 .es-seg{display:inline-flex}
 .est-sub,.est-note{font-size:12px;color:var(--muted);line-height:1.5}
 .est-sub{margin-bottom:12px}
@@ -500,6 +505,111 @@ details.method[open] summary::after{content:" ↑"}
 .tchart{width:100%;height:auto;display:block;overflow:visible}
 .tchart text{font-family:var(--mono);fill:var(--faint);font-size:11px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== Impactrapport (udkast til review) ===== */
+.btn-report{font:700 14px/1 var(--body);padding:13px 22px;border-radius:var(--r-sm);border:none;background:var(--value);color:#fff;cursor:pointer;box-shadow:0 2px 10px rgba(19,122,99,.28)}
+.btn-report:hover{filter:brightness(1.07)}
+#reportOverlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(22,35,61,.55);overflow:auto;-webkit-overflow-scrolling:touch}
+.ro-toolbar{position:sticky;top:0;z-index:2;display:flex;gap:10px;align-items:center;padding:12px 20px;background:var(--ink);border-bottom:1px solid rgba(255,255,255,.12)}
+.ro-tt{margin-right:auto;color:#cfd6e4;font:600 13px/1.2 var(--body);letter-spacing:.02em}
+.ro-toolbar button{font:600 13px/1 var(--body);padding:9px 14px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#eef2f7;cursor:pointer}
+.ro-toolbar button:hover{background:rgba(255,255,255,.16)}
+.ro-toolbar button.ro-primary{background:var(--value);border-color:var(--value);color:#fff}
+.ro-toolbar button.ro-primary:hover{filter:brightness(1.08)}
+#reportBody{max-width:820px;margin:24px auto 64px;background:#fff;color:var(--ink);padding:54px 62px;border-radius:var(--r-sm);box-shadow:0 24px 70px rgba(0,0,0,.35);font-family:var(--body);font-size:15.5px;line-height:1.62}
+#reportBody p{margin:0 0 12px}
+#reportBody ul{margin:0 0 14px;padding-left:22px}
+#reportBody li{margin:0 0 6px}
+.ro-cover{border-bottom:2px solid var(--ink);padding-bottom:28px;margin-bottom:30px}
+.ro-badge{display:inline-block;font:600 11px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--value);border:1px solid var(--value-soft);background:var(--value-soft);padding:6px 10px;border-radius:6px;margin-bottom:18px}
+.ro-title{font-family:var(--disp);font-size:30px;line-height:1.16;font-weight:700;color:var(--ink);margin:0 0 14px;letter-spacing:-.01em}
+.ro-sub{font-size:17px;color:var(--muted);margin:0 0 18px;line-height:1.5}
+.ro-meta{display:flex;flex-wrap:wrap;gap:8px 18px;font:600 11.5px/1 var(--body);color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:18px}
+.ro-disc{font-size:13.5px;color:var(--muted);font-style:italic;border-left:3px solid var(--line);padding-left:14px;margin:0}
+.ro-h2{font-family:var(--disp);font-size:21px;font-weight:700;color:var(--ink);margin:32px 0 12px;padding-top:14px;border-top:1px solid var(--line2);display:flex;align-items:center;gap:12px;letter-spacing:-.01em}
+.ro-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;font-size:14px;background:var(--ink);color:#fff;border-radius:8px;font-weight:700;flex:none;font-family:var(--body)}
+.ro-h3{font-family:var(--disp);font-size:16px;font-weight:700;color:var(--ink);margin:20px 0 8px}
+.ro-small{font-size:13px;color:var(--muted);line-height:1.55}
+.ro-study{border:1px solid var(--line);border-radius:var(--r-sm);padding:14px 18px;margin:0 0 12px;background:#fafbfc}
+.ro-study h3{font-family:var(--disp);font-size:15px;font-weight:700;margin:0 0 6px;color:var(--ink)}
+.ro-study p{font-size:13.5px;margin:0 0 6px;color:var(--muted)}
+.ro-find{margin:0 0 14px}
+.ro-find h3{font-family:var(--disp);font-size:15.5px;font-weight:700;margin:0 0 4px;color:var(--ink)}
+.ro-table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:12px}
+.ro-table th,.ro-table td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;line-height:1.45}
+.ro-table thead th{background:var(--ink);color:#fff;font-weight:600;font-size:11px;letter-spacing:.02em}
+.ro-table tbody tr:nth-child(even){background:var(--line2)}
+.ro-log th{width:34%;background:var(--line2);font-weight:700;color:var(--ink)}
+.ro-kpi{width:100%;border-collapse:collapse;margin:8px 0 16px}
+.ro-kpi td{border-bottom:1px solid var(--line);padding:11px 4px;font-size:14px}
+.ro-kpi td.ro-kv{text-align:right;font-weight:700;font-size:16px;color:var(--value);white-space:nowrap}
+.ro-bars{margin:10px 0 14px}
+.ro-effect{border:1px solid var(--line);border-radius:var(--r-sm);padding:15px 18px 16px;margin:6px 0 14px;background:#fafbfc}
+.ro-eh{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:3px}
+.ro-et{font-family:var(--disp);font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.25}
+.ro-eb{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--value);background:var(--value-soft);padding:2px 9px;border-radius:999px;white-space:nowrap}
+.ro-calc{width:100%;border-collapse:collapse;margin:6px 0 2px;font-size:13.5px}
+.ro-calc td{padding:8px 2px;border-bottom:1px solid var(--line2);vertical-align:top;line-height:1.4;color:var(--ink)}
+.ro-calc td.ro-amt{text-align:right;white-space:nowrap;font-weight:600;font-variant-numeric:tabular-nums;padding-left:16px}
+.ro-calc tr.pos td.ro-amt{color:var(--value)}
+.ro-calc tr.neg td.ro-amt{color:var(--warn)}
+.ro-calc tr.sub td{border-top:1px solid var(--line);border-bottom:none;font-style:italic;color:var(--muted)}
+.ro-calc tr.net td{border-top:2px solid var(--ink);border-bottom:none;font-weight:700;font-size:14.5px;background:var(--value-soft);padding:11px 8px}
+.ro-calc tr.net td.ro-amt{color:var(--value)}
+.ro-note-adhd{font-size:12.5px;color:var(--muted);line-height:1.55;background:#F7F8FA;border:1px solid var(--line2);border-left:3px solid var(--value);border-radius:var(--r-sm);padding:11px 14px;margin:11px 0 0}
+.ro-note-adhd strong{color:var(--ink)}
+.ro-fold{margin:12px 0 0;border-top:1px solid var(--line2);padding-top:2px}
+.ro-fold>summary{cursor:pointer;list-style:none;font-size:12.5px;font-weight:600;color:var(--value);padding:8px 0;display:flex;align-items:center;gap:8px}
+.ro-fold>summary::-webkit-details-marker{display:none}
+.ro-fold>summary::before{content:"\25B8";font-size:11px;color:var(--value);transition:transform .15s ease}
+.ro-fold[open]>summary::before{transform:rotate(90deg)}
+.ro-fold>summary:focus-visible{outline:2px solid var(--value);outline-offset:2px;border-radius:4px}
+.mcard:focus-visible,.seg button:focus-visible{outline:3px solid #1F3D6B;outline-offset:2px}
+.ro-fold-body{padding:2px 0 4px}
+.ro-flabel{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:16px 0 5px}
+.ro-fnote{margin-top:7px}
+.ro-leg-neg{color:var(--muted)}
+.ro-bf-neg{opacity:.92}
+.ro-bar{display:flex;align-items:center;gap:12px;margin:0 0 9px}
+.ro-bl{flex:0 0 128px;font-size:13px;font-weight:600;color:var(--ink)}
+.ro-bt{flex:1;height:18px;background:var(--line2);border-radius:5px;overflow:hidden}
+.ro-bf{height:100%;border-radius:5px}
+.ro-bv{flex:0 0 176px;text-align:right;font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap}
+.ro-bp{color:var(--faint);font-weight:600}
+.ro-foot{margin-top:28px;padding-top:14px;border-top:1px solid var(--line2);font-size:11.5px;color:var(--faint);line-height:1.5}
+@media(max-width:680px){#reportBody{padding:28px 20px;margin:10px;font-size:15px}.ro-bl{flex-basis:84px}.ro-bv{flex-basis:118px;font-size:12px}.ro-title{font-size:23px}.ro-toolbar{flex-wrap:wrap}}
+@media print{
+  body *{visibility:hidden!important}
+  #reportOverlay,#reportOverlay *{visibility:visible!important}
+  #reportOverlay{position:absolute!important;inset:0!important;background:#fff!important;overflow:visible!important;display:block!important}
+  .ro-toolbar{display:none!important}
+  #reportBody{box-shadow:none!important;margin:0 auto!important;max-width:100%!important;border-radius:0!important;padding:0!important}
+  .ro-bf,.ro-num,.ro-table thead th,.ro-badge,.ro-cover,.ro-kv,.ro-pie path,.ro-pie circle,.ro-dot,.ro-calc tr.net td,.ro-eb,.ro-note-adhd{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .ro-fold-body{display:block!important}.ro-fold>summary::before{content:"\25BE"!important;transform:none!important}
+  #reportFab{display:none!important}
+}
+/* report pie + method presets + sticky report button */
+.ro-pie{display:flex;align-items:center;gap:26px;flex-wrap:wrap;margin:8px 0 18px}
+.ro-pie svg{flex:none}
+.ro-legend{display:flex;flex-direction:column;gap:8px}
+.ro-leg{font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:9px}
+.ro-dot{width:12px;height:12px;border-radius:3px;flex:none;display:inline-block}
+.mpreset{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}
+.mpreset-lab{font:600 12px/1 var(--body);color:var(--muted)}
+.mpreset button{font:600 12.5px/1 var(--body);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;transition:border-color .15s,color .15s}
+.mpreset button:hover{border-color:var(--value);color:var(--value)}
+#reportFab{position:fixed;right:22px;bottom:22px;z-index:900;font:700 14px/1 var(--body);padding:14px 22px;border:none;border-radius:999px;background:var(--value);color:#fff;cursor:pointer;box-shadow:0 6px 22px rgba(19,122,99,.42)}
+#reportFab:hover{filter:brightness(1.07)}
+@media(max-width:680px){#reportFab{right:14px;bottom:14px;padding:12px 16px;font-size:13px}.ro-pie{gap:16px;justify-content:center}}
+.starthere{margin:0 0 24px;padding:16px 20px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 1px 2px rgba(22,35,61,.04)}
+.starthere .sh-title{font:600 12px/1 var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--value);margin-bottom:12px}
+.sh-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.sh-steps li{display:flex;gap:10px;align-items:flex-start}
+.sh-n{flex:0 0 24px;width:24px;height:24px;border-radius:50%;background:var(--value-soft);color:var(--value);font:700 13px/24px var(--body);text-align:center}
+.sh-steps li>div{display:flex;flex-direction:column;gap:2px}
+.sh-steps strong{font:600 14px/1.3 var(--body);color:var(--ink)}
+.sh-steps span{font:400 12.5px/1.4 var(--body);color:var(--muted)}
+@media(max-width:680px){.sh-steps{grid-template-columns:1fr;gap:10px}}
 </style>
 </head>
 <body>
@@ -507,31 +617,39 @@ details.method[open] summary::after{content:" ↑"}
   <header>
     <div class="topbar">
       <div>
-        <div class="eyebrow">SES · økonomisk model</div>
-        <h1>Dokumenteret effekt, omsat til kroner — på tre niveauer</h1>
-        <p>Indtast antal brugere og juster antagelserne. Modellen viser værdien af SES ONE (forældre) og SES NXT (børn) fordelt på kommune, region, stat, arbejdsplads og borger — bygget på SØM v3.4's enhedspriser og de publicerede effektstudier.</p>
+        <div class="eyebrow">SES Family · evidens og business case</div>
+        <h1>Se evidensen bag SES Family og beregn værdien for jeres kommune</h1>
+        <p>Her får du overblik over forskningen bag SES Family og kan beregne en business case ud fra jeres kommune, forventede brugere og den beregningsmetode, I ønsker at anvende.</p>
       </div>
-      <button class="btn-reset" id="reset">Nulstil til standard</button>
     </div>
   </header>
 
+  <nav class="starthere" aria-label="Sådan bruger du modellen">
+    <div class="sh-title">Kom godt i gang</div>
+    <ol class="sh-steps">
+      <li><span class="sh-n">1</span><div><strong>Vælg metode(r)</strong><span>Vælg hvordan værdien skal beregnes — fx budget og produktion.</span></div></li>
+      <li><span class="sh-n">2</span><div><strong>Angiv kommune og brugere</strong><span>Indtast eller estimér antal forældre og børn pr. år.</span></div></li>
+      <li><span class="sh-n">3</span><div><strong>Generér rapporten</strong><span>Få en impactrapport med regnestykker bag alle tal.</span></div></li>
+    </ol>
+  </nav>
+
   <section class="evidence">
     <div class="ev-intro">
-      <div class="eyebrow">Grundlaget · evidensen</div>
-      <h2>Hvad hjælper SES på?</h2>
-      <p>Alt nedenfor bygger på de tre forskningsprojekter: SES ONE på en 12-måneders RCT og en 5-årig registeropfølgning, SES NXT på en RCT med opfølgning ved 4 og 12 uger. Effektstørrelser (Cohen's d) er vist som søjler; robuste fund og trends er markeret.</p>
+      <div class="eyebrow">Evidensen</div>
+      <h2>På hvilke områder hjælper SES Family?</h2>
+      <p>Her kan du se de vigtigste dokumenterede effekter af SES ONE og SES NXT. Effekterne spænder fra trivsel, mental sundhed og konflikt til skolefravær, sygedage og sundhedsforbrug.</p>
       <details class="legend-help">
         <summary>Hvad betyder mærkaterne?</summary>
         <div class="legend-box">
           <div class="lh">Effektstørrelse (Cohen's d)</div>
-          <p class="lp">Et standardiseret mål for forskellen mellem SES-gruppen og kontrolgruppen. Søjlen er markeret ved 0,2 (lille), 0,5 (medium) og 0,8 (stor effekt).</p>
+          <p class="lp">Effektstørrelsen viser, hvor tydelig forskellen er mellem interventionsgruppen (dem der fik adgang til værktøjerne) og kontrolgruppen (der ikke fik adgang). Jo længere søjlen er, desto større er effekten.</p>
           <dl>
-            <dt><span class="etag strong">stor effekt</span></dt><dd>Effektstørrelsen er stor (d ≥ 0,8) — en markant forskel mellem grupperne.</dd>
-            <dt><span class="etag ok">robust</span></dt><dd>Et veldokumenteret, statistisk signifikant fund — stærkt nok til med stor sandsynlighed at være reelt og ikke tilfældigt.</dd>
-            <dt><span class="etag soft">lille effekt</span></dt><dd>Effektstørrelsen er lille (omkring d = 0,2) — en reel, men beskeden forskel.</dd>
-            <dt><span class="etag mix">blandet</span></dt><dd>Domænet rummer både robuste fund og trends.</dd>
-            <dt><span class="chip trend">trend</span></dt><dd>Effekten viser en trend — den peger den rigtige vej — men er ikke stærk nok til at gælde som et statistisk signifikant fund.</dd>
-            <dt><span class="chip">OR / IRR</span></dt><dd>Mål fra registerudfald. Under 1 betyder færre hændelser i SES-gruppen.</dd>
+            <dt><span class="etag strong">stor effekt</span></dt><dd>En markant forskel mellem interventionsgruppen og kontrolgruppen.</dd>
+            <dt><span class="etag ok">robust</span></dt><dd>Et statistisk sikkert fund, der med stor sandsynlighed ikke skyldes tilfældighed.</dd>
+            <dt><span class="etag soft">lille effekt</span></dt><dd>En mindre, men stadig relevant forskel.</dd>
+            <dt><span class="etag mix">blandet</span></dt><dd>Området rummer både sikre fund og mere usikre trends.</dd>
+            <dt><span class="chip trend">trend</span></dt><dd>Effekten peger i den rigtige retning, men er ikke statistisk sikker.</dd>
+            <dt><span class="chip">OR / IRR</span></dt><dd>Mål fra registerdata. Når tallet er under 1, betyder det færre hændelser i interventionsgruppen.</dd>
           </dl>
         </div>
       </details>
@@ -541,25 +659,25 @@ details.method[open] summary::after{content:" ↑"}
 
   <section class="whobenefit">
     <div class="ev-intro">
-      <div class="eyebrow">Broen · hvem har gavn?</div>
-      <h2>Hvem mærker effekterne?</h2>
-      <p>Hver effekt rammer først et menneske — barnet eller forælderen — og forplanter sig derfra til de offentlige kasser og arbejdspladsen. Det er den fordeling, økonomimodellen nedenfor sætter kroner på.</p>
+      <div class="eyebrow">Hvem har gavn af værdien?</div>
+      <h2>Hvem mærker de positive effekter?</h2>
+      <p>Nogle effekter mærkes først og fremmest direkte i familien via øget trivsel hos børnene og deres forældre. Andre kan senere ses i offentligt forbrug, arbejdsmarked, skolefravær eller kommunal kapacitet. Derfor viser modellen både borgerens velfærd, offentligt budgetpotentiale og bredere samfundsøkonomiske effekter.</p>
     </div>
     <div class="panel">
       <div id="whoMatrix"></div>
       <div class="who-legend">
-        <span><span class="dotp" style="background:#137A63"></span> primær gevinst (mennesket selv)</span>
-        <span><span class="dota"></span> afledt / økonomisk gevinst</span>
-        <span><span class="dots"></span> systemeffekt — kræver lokale/registerdata</span>
+        <span><span class="dotp" style="background:#137A63"></span> primær gevinst — mærkes direkte af barnet eller den voksne</span>
+        <span><span class="dota"></span> afledt økonomisk gevinst — kan senere ses hos kommune, region, stat eller arbejdsplads</span>
+        <span><span class="dots"></span> systemeffekt — relevant, men kræver lokale data eller særskilt metode</span>
       </div>
     </div>
   </section>
 
   <section class="userlayer">
     <div class="ev-intro">
-      <div class="eyebrow">Hvem og hvor mange</div>
-      <h2>Populations- og adgangslag</h2>
-      <p>Tre trin sætter rammen for beregningen: vælg jeres kommune, fastsæt hvor mange brugere I forventer, og bestem hvis perspektiv værdien skal opgøres fra. Resultatet føder direkte ind i værdimodellen nedenfor.</p>
+      <div class="eyebrow">Hvem og hvor mange kan få glæde af værktøjerne</div>
+      <h2>Målgruppe og brugere</h2>
+      <p>Her kan I se hvor mange børn og forældre I kan forvente at nå ud til i jeres kommune. Det beregnes på baggrund af hvor stor jeres målgruppe er (Kilde DST.dk), hvor bredt I ønsker at udbrede adgangen og om der er ledelsesmæssig forankring. Dette sammenholdes med erfaringer fra andre nordiske kommuner. Følg de tre trin nedenfor.</p>
     </div>
     <div class="panel ulayer">
       <div class="ul-flow">
@@ -569,7 +687,7 @@ details.method[open] summary::after{content:" ↑"}
           <div class="ul-step-main">
             <div class="ul-step-head">
               <div class="ul-step-title">Vælg kommune</div>
-              <div class="ul-step-why">Kommunens størrelse er udgangspunktet for hele beregningen.</div>
+              <div class="ul-step-why">Vi henter skilsmissedata fra Danmarks Statistik fra den valgte kommune.</div>
             </div>
             <div class="ul-grid">
               <div class="field"><label for="kommune">Kommune</label><select id="kommune"></select></div>
@@ -584,10 +702,11 @@ details.method[open] summary::after{content:" ↑"}
           <div class="ul-step-main">
             <div class="ul-step-head">
               <div class="ul-step-title">Forventede brugere om året</div>
-              <div class="ul-step-why">Hvor mange forældre (ONE) og børn (NXT) der får glæde af SES. Estimér ud fra jeres udbredelsesindsats — eller indtast tal, I selv kender.</div>
+              <div class="ul-step-why">Hvor mange forældre (ONE) og børn (NXT) der får glæde af SES. Estimér ud fra jeres udbredelsesstrategi ved hjælp af spørgsmålene. I kan også blot indtaste et antal manuelt og bruge det som baggrund for beregningen.</div>
             </div>
             <div class="seg seg-sm" id="userModeSeg" role="group" aria-label="Brugerinput" style="margin-bottom:14px">
               <button type="button" id="umEstimate" aria-pressed="true">Estimér ud fra strategi</button>
+              <button type="button" id="umDatabase" aria-pressed="false">Fra databasen</button>
               <button type="button" id="umManual" aria-pressed="false">Indtast manuelt</button>
             </div>
             <div id="userManual">
@@ -597,12 +716,18 @@ details.method[open] summary::after{content:" ↑"}
               </div>
             </div>
             <div id="userEstimate">
-              <div class="est-sub">Datagrundlag: faktiske rater fra <b>107 nordiske kommuner</b> (ONE-oprettelser pr. 100.000 indb./md), behandlet som ét samlet datasæt. Vælg jeres udbredelsesindsats, og tryk Beregn.</div>
+              <div class="est-sub">Datagrundlag: brugerdata fra <b>107 nordiske kommuner</b> (ONE-oprettelser pr. 100.000 indb./md) samt skilsmissetal fra Danmarks Statistik.</div>
               <div class="est-tracks" id="estTracks"></div>
               <button type="button" id="estCalc" class="est-calc">Beregn forventede brugere</button>
               <div class="est-result" id="estResult"></div>
               <div class="est-nxt"><label for="nxtRatio">NXT-børn 6-17 pr. ONE-bruger</label><input type="number" id="nxtRatio" min="0" max="3" step="0.05"><span class="est-nxt-note">Afledt — <b>ikke</b> datafittet som ONE. Sæt til 0 ved ingen NXT-licens.</span></div>
-              <div class="est-note">Konverteringsspændet rummer også lokale skilsmisserater, ildsjæle og tilfældig variation — tallene er <b>scenarie-skøn, ikke garantier</b>. Når kommunernes faktiske aktiviteter registreres, kan indsatsfaktoren erstattes af fittede koefficienter pr. spor. Beregningsmåden står i antagelsesloggen nederst.</div>
+              <div class="est-note">Konverteringsspændet rummer også lokale forhold, ildsjæle, kampagne, lokale presse og tilfældig variation. Tallene er <b>scenarie-skøn, ikke garantier</b>. Beregningsmåden står i antagelsesloggen nederst.</div>
+            </div>
+            <div id="userDatabase">
+              <div class="est-sub">Faktisk registrerede brugertal fra <b>Salesforce-udtrækket pr. 14.06.2026</b> — 107 kommuner med SES-licens (Danmark, Sverige og Åland). Vælg en kommune for at indsætte dens tal direkte. På sigt kobles databasen på, så tallene opdateres automatisk.</div>
+              <div class="field"><label for="dbKom">Kommune i databasen</label><select id="dbKom"></select></div>
+              <div class="est-result" id="dbResult"></div>
+              <div class="est-note">ONE-tallet er kommunens <b>faktisk registrerede voksne ONE-brugere pr. måned × 12</b> — samme år-konvention som estimatoren, så de tre metoder er sammenlignelige. NXT-børn er afledt af kommunens Child UE-ratio (NXT-oprettelser/100k/md × 12), da udtrækket ikke har et særskilt NXT-antal. Nyligt onboardede kommuner kan se kunstigt høje ud, fordi en enkelt opstartsmåned ganges op.</div>
             </div>
           </div>
         </div>
@@ -642,9 +767,10 @@ details.method[open] summary::after{content:" ↑"}
   </section>
 
   <div class="bridge">
-    <div class="eyebrow">Fra effekt til kroner</div>
-    <h2>Hvad er det værd?</h2>
-    <p>Modellen nedenfor sætter kroner på effekterne ovenfor — men kun gennem den eller de beregningsmetoder, du vælger. Hver metode viser tydeligt, hvilke effekter den kan værdisætte, og hvilke der falder uden for. Vælg derfor metode bevidst: et rent budgetperspektiv fanger fx ikke de store mentale og livskvalitetseffekter.</p>
+    <div class="eyebrow">Fra effekt til business case</div>
+    <h2>Vælg, hvordan værdien skal beregnes</h2>
+    <p>Du har nu set effekterne og sat rammen for jeres kommune. Næste skridt er at vælge, hvordan værdien skal opgøres.</p>
+    <p>Hver metode viser en bestemt del af business casen. Nogle metoder viser offentligt budgetpotentiale. Andre viser produktion, arbejdsmarked eller borgernes velfærd. Vælg den metode, der passer bedst til det spørgsmål, du vil have svar på.</p>
   </div>
 
   <div class="grid">
@@ -656,8 +782,8 @@ details.method[open] summary::after{content:" ↑"}
           <div class="field">
             <label>Værdi pr. barn der kommer ud af bekymrende fravær (10 år)</label>
             <div class="seg" role="group" aria-label="Skolefraværsværdi">
-              <button id="sNetto" aria-pressed="true">Netto 41.600 (base)</button>
-              <button id="sBrutto" aria-pressed="false">Brutto 75.000 (scenarie)</button>
+              <button id="sNetto" aria-pressed="true">Base 41.600</button>
+              <button id="sBrutto" aria-pressed="false">ADHD/autisme 74.000</button>
             </div>
           </div>
         </div>
@@ -696,7 +822,17 @@ details.method[open] summary::after{content:" ↑"}
       <div class="panel">
         <div class="card-h"><h2>Vælg metode(r)</h2><span class="hint">CCA · ingen default-beregning</span></div>
         <p class="picker-intro">Vælg en eller flere metoder for at se, hvilke dele af SES Familys dokumenterede effektgrundlag de kan belyse.</p>
+        <div class="mpreset"><span class="mpreset-lab">Hurtige opsæt — leg med metodevalget:</span><button type="button" data-preset="base">Base case</button><button type="button" data-preset="budget">Kun budget</button><button type="button" data-preset="welfare">+ borgervelfærd</button><button type="button" data-preset="clear">Ryd</button></div>
         <div class="mcards" id="methodCards"></div>
+      </div>
+
+      <div class="panel" id="reportPanel">
+        <div class="card-h"><h2>Generér impactrapport (udkast)</h2><span class="hint">til fagligt review · kun værdiskabelse</span></div>
+        <p class="foot" style="margin-top:4px">Saml de valgte metoder til et struktureret rapportudkast — forside, executive summary, forskning, hovedfund, metode, økonomiske resultater og aktørfordeling — klar til fagligt review. Rapporten er generisk og kræver ikke en bestemt kommune eller et bestemt brugertal; vælger du kommune og forventede brugere, tilføjes automatisk et konkret kommunescenarie. Ingen licens- eller udbredelsesudgifter indgår.</p>
+        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:14px">
+          <button class="btn-report" id="genReport" type="button">Generér rapportudkast</button>
+          <span id="reportHint" class="foot" style="display:none;color:#C0392B;font-weight:600"></span>
+        </div>
       </div>
 
       <div class="panel" id="emptyState">
@@ -859,6 +995,19 @@ details.method[open] summary::after{content:" ↑"}
 
       <p class="foot">Generisk model · 2025-priser · bygget på SØM v3.4 (Social- og Boligstyrelsen), COWI 2020 og de publicerede SES-effektstudier. Tallene er en beslutningsstøtte, ikke en garanti, og afhænger af de valgte antagelser.</p>
   </div>
+  <div class="page-reset"><button class="btn-reset" id="reset">Nulstil til standard</button></div>
+</div>
+
+<button id="reportFab" type="button">Generér rapportudkast</button>
+
+<div id="reportOverlay" role="dialog" aria-modal="true" aria-label="Impactrapport-udkast">
+  <div class="ro-toolbar">
+    <span class="ro-tt">Impactrapport · udkast til review</span>
+    <button id="roCopy" type="button">Kopiér alt</button>
+    <button id="roPrint" type="button">Print / Gem som PDF</button>
+    <button id="roClose" class="ro-primary" type="button">Luk</button>
+  </div>
+  <div id="reportBody"></div>
 </div>
 
 <script>
@@ -879,26 +1028,26 @@ const ONE=[
 ];
 const NXT=[
  {id:'skole',label:'Ud af bekymrende skolefravær',basis:'Problematisk fravær 55,7%→15,9% (SØM-værdi, 10 år)',unit:'SCHOOL',track:'budget',years:[1,2,3,4,5,6,7,8,9,10]},
- {id:'somatik',label:'Færre somatiske klager',basis:'OR=4,18 kontrol vs. NXT (p<.001)',F:0.5,unit:{kom:18,reg:144},track:'budget',years:[1]},
+ {id:'somatik',label:'Færre somatiske klager',basis:'OR=4,18 (kontrolgruppe vs. interventionsgruppe; p<.001)',F:0.5,unit:{kom:18,reg:144},track:'budget',years:[1]},
  {id:'soevn',label:'Færre søvnproblemer',basis:'OR=3,99 (p<.001)',F:0.2,unit:{kom:3,reg:626},track:'budget',years:[1]},
  {id:'ambulant',label:'Færre somatiske ambulante besøg',basis:'Lavere somatisk ressourcebrug',F:0.1,unit:{kom:588,reg:2365},track:'budget',years:[1]},
 ];
 
 const DEFAULTS={nF:100,nB:100,prod:1900,tax:0.4,income:113400,
-  schoolValue:41600,schoolShare:0.398,sKom:0.70,sReg:0.05,sStat:0.25,
-  qaly:300000,adultGain:0.05,childGain:0.10,years:1,hasONE:true,hasNXT:false,hasPRO:false,licONE:null,licNXT:null,licPRO:null,disseCost:null,ceaComputed:false,ceaScope:'cohort',ceaSumShown:false,
-  wKom:0,wReg:0,wStat:0,wArb:0,wPriv:0,discount:0.035,perspective:'tilpasset',
-  sel:{budget:false,produktion:false,wellby:false,qaly:false,cea:false,lokal:false},
+  schoolValue:41600,schoolGross:93400,schoolEdu:-51800,schoolShare:0.398,gKom:0.78,gReg:0.04,gStat:0.18,
+  qaly:300000,adultGain:0.05,childGain:0.10,years:1,hasONE:true,hasNXT:true,hasPRO:false,licONE:null,licNXT:null,licPRO:null,disseCost:null,ceaComputed:false,ceaScope:'cohort',ceaSumShown:false,
+  wKom:1,wReg:1,wStat:1,wArb:1,wPriv:1,discount:0.035,perspective:'samfund',
+  sel:{budget:true,produktion:true,wellby:false,qaly:false,cea:false,lokal:false},
   adjMode:'warn',adjPrimary:'sygedage',adjHaircut:0.5,
   wbAdult:0.5,wbChild:0.3,wbValue:130000,wbHaircut:0.5,
-  nP:0,kommune:'',nInhab:null,nMunEmp:null,fag:{psychologists:0,school_nurses:0,teachers:0,social_workers:0,pedagogues:0,family_therapists:0,gps:0},
-  userMode:'estimate',estComputed:false,strat:{web:1.5,some:3,fysisk:2,intern:1.5,pro:0,ledelse:0},nxtRatio:0.65};
+  nP:0,kommune:'',dbKom:'',nInhab:null,nMunEmp:null,fag:{psychologists:0,school_nurses:0,teachers:0,social_workers:0,pedagogues:0,family_therapists:0,gps:0},
+  userMode:'estimate',estComputed:false,strat:{web:1.5,some:3,fysisk:2,intern:1.5,pro:0,konsulent:0,ledelse:0},nxtRatio:0.65};
 let P=JSON.parse(JSON.stringify(DEFAULTS));
 
 function ppActor(e,P){
   let F,u;
   if(e.unit==='INCOME'){F=P.income;u={kom:P.tax*0.6,stat:P.tax*0.4,priv:1-P.tax};}
-  else if(e.unit==='SCHOOL'){F=P.schoolShare;u={kom:P.schoolValue*P.sKom,reg:P.schoolValue*P.sReg,stat:P.schoolValue*P.sStat};}
+  else if(e.unit==='SCHOOL'){F=P.schoolShare;const scale=P.schoolValue/(P.schoolGross+P.schoolEdu);const g=P.schoolGross*scale,ed=P.schoolEdu*scale;u={kom:g*P.gKom,reg:g*P.gReg,stat:g*P.gStat+ed};}
   else {F=e.F;u=Object.assign({},e.unit);if(u.arb==='PROD')u.arb=Math.max(0,P.prod-246-292);}
   const o={};ACT.forEach(a=>o[a]=F*(u[a]||0));return o;
 }
@@ -1049,6 +1198,150 @@ const FAGGRUPPER=[
 ];
 const KOMMUNER=['Andet / international','Albertslund','Allerød','Assens','Ballerup','Billund','Bornholm','Brøndby','Brønderslev','Dragør','Egedal','Esbjerg','Fanø','Favrskov','Faxe','Fredensborg','Fredericia','Frederiksberg','Frederikshavn','Frederikssund','Furesø','Faaborg-Midtfyn','Gentofte','Gladsaxe','Glostrup','Greve','Gribskov','Guldborgsund','Haderslev','Halsnæs','Hedensted','Helsingør','Herlev','Herning','Hillerød','Hjørring','Holbæk','Holstebro','Horsens','Hvidovre','Høje-Taastrup','Hørsholm','Ikast-Brande','Ishøj','Jammerbugt','Kalundborg','Kerteminde','Kolding','København','Køge','Langeland','Lejre','Lemvig','Lolland','Lyngby-Taarbæk','Læsø','Mariagerfjord','Middelfart','Morsø','Norddjurs','Nordfyns','Nyborg','Næstved','Odder','Odense','Odsherred','Randers','Rebild','Ringkøbing-Skjern','Ringsted','Roskilde','Rudersdal','Rødovre','Samsø','Silkeborg','Skanderborg','Skive','Slagelse','Solrød','Sorø','Stevns','Struer','Svendborg','Syddjurs','Sønderborg','Thisted','Tønder','Tårnby','Vallensbæk','Varde','Vejen','Vejle','Vesthimmerlands','Viborg','Vordingborg','Ærø','Aabenraa','Aalborg','Aarhus'];
 const KOMMUNEDATA={"Stevns":[23842,1387,1080],"Varde":[49468,2655,2174],"Herning":[90546,4403,3964],"Svendborg":[60027,3173,2871],"Mariagerfjord":[41541,2169,1886],"Struer":[20122,1088,861],"Kerteminde":[24299,1359,1114],"Holstebro":[59324,3113,2610],"Lejre":[29879,1451,1275],"Tønder":[36174,1781,1606],"Sorø":[30853,1933,1720],"Vesthimmerlands":[35632,2059,1698],"Morsø":[19344,949,793],"Langeland":[11841,616,439],"Holbæk":[75009,4172,3948],"Rebild":[31280,1456,1399],"Odder":[24310,1075,1017],"Vallensbæk":[18689,875,853],"Frederiksberg":[106150,3363,4275],"Vordingborg":[44831,2563,2175],"Ishøj":[24685,1232,1297],"Hjørring":[62979,3608,3132],"Roskilde":[92697,4520,3900],"Ringsted":[36010,2064,1710],"Guldborgsund":[59119,3535,3029],"Helsingør":[64244,3687,3016],"Slagelse":[80959,4661,4340],"Thisted":[42572,2224,1878],"Brønderslev":[36529,2083,1757],"Rødovre":[45138,2057,2412],"Fanø":[3332,179,137],"Brøndby":[40990,2219,2114],"Skive":[44104,2259,1961],"Lemvig":[18596,843,629],"Faxe":[38143,2411,1926],"Odsherred":[31988,1831,1484],"Sønderborg":[74123,3804,3591],"Horsens":[98912,5247,4715],"Middelfart":[40625,2228,1841],"Vejen":[42641,2311,1937],"Syddjurs":[44394,2179,1820],"Kolding":[96214,5253,4950],"Skanderborg":[66352,3221,2790],"Frederikshavn":[57523,3165,2637],"Læsø":[1683,81,43],"Nyborg":[32401,1708,1575],"Randers":[100564,5955,5240],"Høje-Taastrup":[60458,3233,2831],"Nordfyns":[29179,1669,1251],"Egedal":[46240,2343,1912],"Greve":[54120,3021,2643],"Jammerbugt":[37998,2075,1707],"Samsø":[3617,164,105],"Aalborg":[226033,10173,9516],"Odense":[213168,9727,9914],"Assens":[40369,2423,1926],"Bornholm":[38677,2199,1813],"Billund":[27200,1413,1223],"Albertslund":[28397,1399,1572],"Dragør":[14474,628,525],"Lolland":[38533,2260,1857],"Kalundborg":[47954,2837,2512],"Favrskov":[49773,2239,1886],"Hedensted":[48578,2452,2174],"Hørsholm":[25354,1159,1003],"Ærø":[6029,210,215],"Furesø":[42874,1920,1747],"Ikast-Brande":[43305,2237,2075],"Faaborg-Midtfyn":[52328,2799,2421],"Solrød":[25040,1381,1204],"Norddjurs":[36477,2100,1751],"Silkeborg":[102753,4973,4323],"Fredensborg":[42445,2199,1937],"Fredericia":[52939,2905,2862],"Køge":[63962,3721,3075],"Esbjerg":[114947,6039,5722],"Haderslev":[55218,3132,2635],"Viborg":[97874,5333,4799],"Hillerød":[55182,2871,2412],"Ballerup":[53950,2329,2725],"Hvidovre":[54228,2600,2889],"København":[673438,26427,28980],"Frederikssund":[47450,2643,2235],"Gladsaxe":[71185,3324,3476],"Halsnæs":[31738,1888,1474],"Gentofte":[75086,3095,3023],"Tårnby":[44214,2179,2242],"Glostrup":[25834,1095,1155],"Lyngby-Taarbæk":[58614,2240,2179],"Gribskov":[41787,2289,1771],"Aarhus":[378361,14107,14422],"Næstved":[85163,5249,4493],"Rudersdal":[57912,2313,2015],"Vejle":[123250,6700,5666],"Herlev":[32030,1329,1642],"Allerød":[26496,1156,995],"Ringkøbing-Skjern":[55405,2721,2133],"Aabenraa":[58405,3359,3024]};
+/* SES-licenskommuner — Salesforce-udtræk pr. 14.06.2026 (107). mo = faktiske voksne ONE-brugere/md; aue/cue = UE-ratio pr. 100k/md; dk = match til kommune-dropdown (trin 1) eller null. */
+/* "Fra databasen" er midlertidigt SKJULT, indtil datagrundlaget (Salesforce-udtrækket) er godt nok.
+   Hele metoden er bevaret intakt nedenfor: SFDATA, DKTOSF, buildDbPicker(), renderDatabase(),
+   render-grenen, antagelsesloggen og lytterne. For at slå funktionen til igen: sæt flaget til true.
+   Intet andet skal ændres. */
+const DB_MODE_ENABLED=false;
+const SFDATA={
+  "Aarhus Kommune":{c:"DK",t:"Adoption",pop:378361,aue:2.52,cue:0,mo:10,start:"10.08.2021",dk:"Aarhus"},
+  "Allerød Kommune":{c:"DK",t:"Onboarding",pop:26496,aue:392.51,cue:105.68,mo:104,start:"05.05.2026",dk:"Allerød"},
+  "Ballerup Kommune":{c:"DK",t:"Loyalty",pop:53950,aue:7.16,cue:7.41,mo:4,start:"01.08.2021",dk:"Ballerup"},
+  "Esbjerg Kommune":{c:"DK",t:"Adoption",pop:114947,aue:2.56,cue:0,mo:3,start:"04.09.2023",dk:"Esbjerg"},
+  "Faaborg-Midtfyn Kommune":{c:"DK",t:"Value Realization",pop:52328,aue:11.47,cue:0,mo:6,start:"18.12.2023",dk:"Faaborg-Midtfyn"},
+  "Favrskov Kommune":{c:"DK",t:"Adoption",pop:49773,aue:3.57,cue:0,mo:2,start:"10.08.2021",dk:"Favrskov"},
+  "Fredensborg Kommune":{c:"DK",t:"Adoption",pop:42445,aue:6.26,cue:0,mo:3,start:"10.08.2021",dk:"Fredensborg"},
+  "Frederikssund Kommune":{c:"DK",t:"Value Realization",pop:47450,aue:4.65,cue:3.89,mo:2,start:"10.08.2021",dk:"Frederikssund"},
+  "Furesø Kommune":{c:"DK",t:"Adoption",pop:42874,aue:5.91,cue:1.48,mo:3,start:"10.08.2021",dk:"Furesø"},
+  "Gentofte Kommune":{c:"DK",t:"Adoption",pop:75086,aue:2.66,cue:0,mo:2,start:"15.12.2022",dk:"Gentofte"},
+  "Gladsaxe Kommune":{c:"DK",t:"Value Realization",pop:71185,aue:3.83,cue:1.4,mo:3,start:"10.08.2021",dk:"Gladsaxe"},
+  "Glostrup Kommune":{c:"DK",t:"Adoption",pop:25834,aue:4.67,cue:0,mo:1,start:"10.08.2021",dk:"Glostrup"},
+  "Gribskov Kommune":{c:"DK",t:"Adoption",pop:41787,aue:2.56,cue:0,mo:1,start:"10.08.2021",dk:"Gribskov"},
+  "Haderslev Kommune":{c:"DK",t:"Value Realization",pop:55218,aue:7.85,cue:6.92,mo:4,start:"11.09.2023",dk:"Haderslev"},
+  "Halsnæs Kommune":{c:"DK",t:"Adoption",pop:31738,aue:4.73,cue:0,mo:2,start:"10.08.2021",dk:"Halsnæs"},
+  "Hedensted Kommune":{c:"DK",t:"Adoption",pop:48578,aue:5.56,cue:0,mo:3,start:"10.12.2023",dk:"Hedensted"},
+  "Herlev Kommune":{c:"DK",t:"Value Realization",pop:32030,aue:7.81,cue:2.2,mo:3,start:"10.08.2021",dk:"Herlev"},
+  "Hillerød Kommune":{c:"DK",t:"Value Realization",pop:55182,aue:8.87,cue:4.58,mo:5,start:"10.08.2021",dk:"Hillerød"},
+  "Hvidovre Kommune":{c:"DK",t:"Value Realization",pop:54228,aue:7.46,cue:0,mo:4,start:"01.12.2022",dk:"Hvidovre"},
+  "Hørsholm Kommune":{c:"DK",t:"Onboarding",pop:25354,aue:17.35,cue:5.52,mo:4,start:"01.01.2026",dk:"Hørsholm"},
+  "Ikast-Brande Kommune":{c:"DK",t:"Value Realization",pop:43305,aue:16.37,cue:4.62,mo:7,start:"01.07.2025",dk:"Ikast-Brande"},
+  "Kalundborg Kommune":{c:"DK",t:"Value Realization",pop:47954,aue:9.93,cue:3.68,mo:5,start:"04.09.2024",dk:"Kalundborg"},
+  "Københavns Kommune":{c:"DK",t:"Adoption",pop:673438,aue:1.72,cue:0,mo:12,start:"10.08.2021",dk:"København"},
+  "Køge Kommune":{c:"DK",t:"Value Realization",pop:63962,aue:10.74,cue:0,mo:7,start:"07.12.2023",dk:"Køge"},
+  "Lolland Kommune":{c:"DK",t:"Adoption",pop:38533,aue:3.76,cue:1.8,mo:1,start:"01.08.2021",dk:"Lolland"},
+  "Lyngby-Taarbæk Kommune":{c:"DK",t:"Adoption",pop:58614,aue:5.03,cue:0,mo:3,start:"10.08.2021",dk:"Lyngby-Taarbæk"},
+  "Norddjurs Kommune":{c:"DK",t:"Churned (In Transition)",pop:36477,aue:5.44,cue:0,mo:2,start:"10.08.2021",dk:"Norddjurs"},
+  "Næstved Kommune":{c:"DK",t:"Loyalty",pop:85163,aue:7.67,cue:3.94,mo:7,start:"10.08.2021",dk:"Næstved"},
+  "Rudersdal Kommune":{c:"DK",t:"Adoption",pop:57912,aue:5.89,cue:0,mo:3,start:"10.08.2021",dk:"Rudersdal"},
+  "Silkeborg Kommune":{c:"DK",t:"Value Realization",pop:102753,aue:9.7,cue:2.81,mo:10,start:"01.09.2023",dk:"Silkeborg"},
+  "Solrød Kommune":{c:"DK",t:"Adoption",pop:25040,aue:24.76,cue:10.38,mo:6,start:"01.01.2026",dk:"Solrød"},
+  "Tårnby Kommune":{c:"DK",t:"Adoption",pop:44214,aue:3.94,cue:2.26,mo:2,start:"10.08.2021",dk:"Tårnby"},
+  "Tønder Kommune":{c:"DK",t:"Churned (In Transition)",pop:36174,aue:5.82,cue:0.92,mo:2,start:"22.06.2022",dk:"Tønder"},
+  "Vejle Kommune":{c:"DK",t:"Value Realization",pop:123250,aue:3.4,cue:0,mo:4,start:"10.08.2021",dk:"Vejle"},
+  "Viborg Kommune":{c:"DK",t:"Value Realization",pop:97874,aue:5.95,cue:2.28,mo:6,start:"10.08.2021",dk:"Viborg"},
+  "Ærø Kommune":{c:"DK",t:"Adoption",pop:6029,aue:15.83,cue:0,mo:1,start:"30.08.2024",dk:"Ærø"},
+  "Alingsås kommun":{c:"SE",t:"Onboarding",pop:42722,aue:14.04,cue:4.68,mo:6,start:"24.03.2026",dk:null},
+  "Alvesta kommun":{c:"SE",t:"Adoption",pop:19830,aue:6.54,cue:0,mo:1,start:"08.03.2024",dk:null},
+  "Bergs kommun":{c:"SE",t:"Adoption",pop:7108,aue:24.89,cue:0,mo:2,start:"08.05.2025",dk:null},
+  "Bjuvs kommun":{c:"SE",t:"Churned (In Transition)",pop:15985,aue:6.02,cue:3.13,mo:1,start:"19.04.2024",dk:null},
+  "Bollnäs kommun":{c:"SE",t:"Onboarding",pop:26243,aue:13.81,cue:1.43,mo:4,start:"23.10.2025",dk:null},
+  "Burlövs kommun":{c:"SE",t:"In renewal",pop:20101,aue:11.83,cue:1.83,mo:2,start:"01.05.2023",dk:null},
+  "Båstad kommun":{c:"SE",t:"Churned (In Transition)",pop:16026,aue:6.35,cue:3.03,mo:1,start:"20.09.2021",dk:null},
+  "Danderyds kommun":{c:"SE",t:"Onboarding",pop:32425,aue:10.57,cue:0.44,mo:3,start:"17.11.2025",dk:null},
+  "Eslövs kommun":{c:"SE",t:"Onboarding",pop:34922,aue:2.86,cue:0,mo:1,start:"12.05.2026",dk:null},
+  "Falkenbergs kommun":{c:"SE",t:"Loyalty",pop:47337,aue:11.44,cue:4.23,mo:5,start:"26.01.2023",dk:null},
+  "Grästorps kommun":{c:"SE",t:"Adoption",pop:5555,aue:7.46,cue:0,mo:0,start:"30.01.2023",dk:null},
+  "Götene kommun":{c:"SE",t:"Adoption",pop:13286,aue:3.76,cue:0,mo:1,start:"01.02.2023",dk:null},
+  "Halmstads kommun":{c:"SE",t:"Value Realization",pop:106084,aue:7.3,cue:0,mo:8,start:"04.11.2022",dk:null},
+  "Helsingborg stad":{c:"SE",t:"Churned (In Transition)",pop:152091,aue:5.69,cue:2.1,mo:9,start:"20.09.2021",dk:null},
+  "Höganäs kommun":{c:"SE",t:"Churned (In Transition)",pop:28430,aue:5.14,cue:2.01,mo:1,start:"27.04.2022",dk:null},
+  "Höörs kommun":{c:"SE",t:"Adoption",pop:17518,aue:17.13,cue:0,mo:3,start:"21.11.2024",dk:null},
+  "Järfälla kommun":{c:"SE",t:"Loyalty",pop:88950,aue:6.84,cue:1.67,mo:6,start:"01.04.2022",dk:null},
+  "Kalix kommun":{c:"SE",t:"Adoption",pop:15391,aue:18.47,cue:3.08,mo:3,start:"26.11.2024",dk:null},
+  "Klippans kommun":{c:"SE",t:"Churned (In Transition)",pop:17714,aue:3.96,cue:2.58,mo:1,start:"20.09.2021",dk:null},
+  "Kristianstads Kommun":{c:"SE",t:"Adoption",pop:86379,aue:12.27,cue:0,mo:11,start:"31.10.2024",dk:null},
+  "Krokoms kommun":{c:"SE",t:"Adoption",pop:15680,aue:15.15,cue:0,mo:2,start:"23.10.2023",dk:null},
+  "Kungsbacka kommun":{c:"SE",t:"Loyalty",pop:85792,aue:12.64,cue:4.14,mo:11,start:"12.04.2023",dk:null},
+  "Kävlinge kommun":{c:"SE",t:"Adoption",pop:32477,aue:12.32,cue:0,mo:4,start:"02.06.2025",dk:null},
+  "Laholms kommun":{c:"SE",t:"Value Realization",pop:26595,aue:12.2,cue:0,mo:3,start:"26.01.2023",dk:null},
+  "Lerums kommun":{c:"SE",t:"Loyalty",pop:43570,aue:28.69,cue:6.2,mo:13,start:"01.10.2024",dk:null},
+  "Lessebo kommun":{c:"SE",t:"Adoption",pop:8289,aue:10.05,cue:0,mo:1,start:"14.12.2022",dk:null},
+  "Lidingö stad":{c:"SE",t:"In renewal",pop:48377,aue:7.68,cue:0,mo:4,start:"25.11.2025",dk:null},
+  "Lidköpings kommun":{c:"SE",t:"Loyalty",pop:40457,aue:11.61,cue:5.88,mo:5,start:"04.01.2022",dk:null},
+  "Ljusdals kommun":{c:"SE",t:"Adoption",pop:18445,aue:16.26,cue:5.87,mo:3,start:"19.06.2025",dk:null},
+  "Lomma kommun":{c:"SE",t:"Adoption",pop:24715,aue:15.14,cue:0,mo:4,start:"17.11.2023",dk:null},
+  "Luleå kommun":{c:"SE",t:"In renewal",pop:79645,aue:6.53,cue:0,mo:5,start:"14.10.2024",dk:null},
+  "Lunds kommun":{c:"SE",t:"Loyalty",pop:131590,aue:17.87,cue:4.05,mo:24,start:"17.05.2023",dk:null},
+  "Lysekils kommun":{c:"SE",t:"Adoption",pop:13907,aue:10.41,cue:0,mo:1,start:"27.04.2023",dk:null},
+  "Malmö stad":{c:"SE",t:"In renewal",pop:365644,aue:7.18,cue:0,mo:26,start:"12.07.2023",dk:null},
+  "Norrtälje kommun":{c:"SE",t:"Value Realization",pop:66585,aue:12.16,cue:0,mo:8,start:"27.11.2023",dk:null},
+  "Norsjö kommun":{c:"SE",t:"In renewal",pop:3968,aue:4.8,cue:0,mo:0,start:"09.09.2024",dk:null},
+  "Nynäshamns kommun":{c:"SE",t:"Adoption",pop:30579,aue:10.63,cue:0,mo:3,start:"01.02.2024",dk:null},
+  "Ovanåkers kommun":{c:"SE",t:"Adoption",pop:11341,aue:14.33,cue:0,mo:2,start:"13.02.2025",dk:null},
+  "Rättviks kommun":{c:"SE",t:"Onboarding",pop:10998,aue:37.89,cue:0,mo:4,start:"08.12.2025",dk:null},
+  "Sigtuna kommun":{c:"SE",t:"Onboarding",pop:52767,aue:10.74,cue:3.16,mo:6,start:"11.03.2026",dk:null},
+  "Simrishamns kommun":{c:"SE",t:"Onboarding",pop:18795,aue:1.77,cue:0,mo:0,start:"13.03.2026",dk:null},
+  "Sjöbo kommun":{c:"SE",t:"Onboarding",pop:19390,aue:0,cue:1.72,mo:0,start:"13.03.2026",dk:null},
+  "Skara Kommun":{c:"SE",t:"Adoption",pop:18707,aue:6.99,cue:0,mo:1,start:"13.03.2023",dk:null},
+  "Skurups kommun":{c:"SE",t:"Onboarding",pop:17099,aue:40.94,cue:0,mo:7,start:"17.04.2026",dk:null},
+  "Strömsunds kommun":{c:"SE",t:"Value Realization",pop:11023,aue:27.58,cue:2.79,mo:3,start:"01.05.2024",dk:null},
+  "Svalövs kommun":{c:"SE",t:"Churned (In Transition)",pop:14543,aue:7.24,cue:1.57,mo:1,start:"20.09.2021",dk:null},
+  "Svedala kommun":{c:"SE",t:"Onboarding",pop:23581,aue:76.33,cue:0,mo:18,start:"07.05.2026",dk:null},
+  "Tingsryds kommun":{c:"SE",t:"Adoption",pop:11966,aue:6.96,cue:0,mo:1,start:"14.12.2022",dk:null},
+  "Tomelilla kommun":{c:"SE",t:"Onboarding",pop:13663,aue:0,cue:0,mo:0,start:"13.03.2026",dk:null},
+  "Trelleborgs kommun":{c:"SE",t:"Onboarding",pop:47269,aue:19.34,cue:0,mo:9,start:"25.11.2025",dk:null},
+  "Täby kommun":{c:"SE",t:"Value Realization",pop:77744,aue:13.88,cue:4.78,mo:11,start:"01.01.2024",dk:null},
+  "Upplands Väsby kommun":{c:"SE",t:"Value Realization",pop:50323,aue:6.97,cue:0,mo:4,start:"18.01.2022",dk:null},
+  "Uppvidinge kommun":{c:"SE",t:"Adoption",pop:9061,aue:8.41,cue:0,mo:1,start:"14.12.2022",dk:null},
+  "Vallentuna kommun":{c:"SE",t:"Adoption",pop:35119,aue:16.61,cue:0,mo:6,start:"20.12.2024",dk:null},
+  "Vara kommun":{c:"SE",t:"Onboarding",pop:16088,aue:3.03,cue:0,mo:0,start:"07.03.2023",dk:null},
+  "Varbergs kommun":{c:"SE",t:"Value Realization",pop:69070,aue:10.42,cue:1.09,mo:7,start:"27.01.2023",dk:null},
+  "Vaxholms stad":{c:"SE",t:"Onboarding",pop:11822,aue:20.54,cue:1.21,mo:2,start:"26.11.2025",dk:null},
+  "Värmdö kommun":{c:"SE",t:"Adoption",pop:46635,aue:8.42,cue:0,mo:4,start:"27.02.2023",dk:null},
+  "Värnamo kommun":{c:"SE",t:"Adoption",pop:34542,aue:20.71,cue:0,mo:7,start:"01.05.2025",dk:null},
+  "Västerviks kommun":{c:"SE",t:"Adoption",pop:36447,aue:12.11,cue:0,mo:4,start:"01.01.2024",dk:null},
+  "Västerås stad":{c:"SE",t:"Onboarding",pop:160634,aue:9.34,cue:0.62,mo:15,start:"17.04.2026",dk:null},
+  "Växjö kommun":{c:"SE",t:"Adoption",pop:98334,aue:9.27,cue:0,mo:9,start:"14.12.2022",dk:null},
+  "Ystad kommun":{c:"SE",t:"Onboarding",pop:32158,aue:6.22,cue:0,mo:2,start:"13.03.2026",dk:null},
+  "Älmhults kommun":{c:"SE",t:"Adoption",pop:17653,aue:19.14,cue:0,mo:3,start:"01.01.2024",dk:null},
+  "Ånge kommun":{c:"SE",t:"Adoption",pop:9044,aue:6.5,cue:0,mo:1,start:"10.01.2025",dk:null},
+  "Åstorps kommun":{c:"SE",t:"Churned (In Transition)",pop:16449,aue:3.2,cue:0.52,mo:1,start:"20.09.2021",dk:null},
+  "Örkelljunga kommun":{c:"SE",t:"Churned (In Transition)",pop:10277,aue:3.93,cue:1.95,mo:0,start:"20.09.2021",dk:null},
+  "Örnsköldsviks kommun":{c:"SE",t:"Adoption",pop:55443,aue:19.84,cue:3.91,mo:11,start:"15.12.2025",dk:null},
+  "Östersunds kommun":{c:"SE",t:"Adoption",pop:64979,aue:14.17,cue:0,mo:9,start:"01.06.2024",dk:null},
+  "Österåkers kommun":{c:"SE",t:"Adoption",pop:49787,aue:6.18,cue:0,mo:3,start:"15.04.2024",dk:null},
+  "Kommunernas socialtjänst på Åland":{c:"Åland",t:"Value Realization",pop:30400,aue:16.57,cue:8.62,mo:5,start:"22.02.2022",dk:null}
+};
+const DKTOSF={}; Object.keys(SFDATA).forEach(n=>{const k=SFDATA[n].dk; if(k) DKTOSF[k]=n;});
+
+function buildDbPicker(){
+  const sel=$('dbKom'); if(!sel) return;
+  const groups={DK:[],SE:[],'Åland':[]}, GL={DK:'Danmark',SE:'Sverige','Åland':'Åland'};
+  Object.keys(SFDATA).forEach(n=>groups[SFDATA[n].c].push(n));
+  let h='<option value="">— vælg kommune —</option>';
+  ['DK','SE','Åland'].forEach(c=>{ if(!groups[c].length) return;
+    groups[c].sort((a,b)=>a.localeCompare(b,'da'));
+    h+='<optgroup label="'+GL[c]+'">'+groups[c].map(n=>'<option value="'+n+'">'+n+' \u2014 '+SFDATA[n].t.replace('Churned (In Transition)','Churned')+'</option>').join('')+'</optgroup>';
+  });
+  sel.innerHTML=h;
+}
+function renderDatabase(P){
+  const el=$('dbResult'); if(!el) return;
+  const d=SFDATA[P.dbKom];
+  if(!d){ el.innerHTML='<div class="er-empty">V\u00e6lg en kommune i databasen for at inds\u00e6tte de registrerede brugertal.</div>'; return; }
+  const nF=d.mo*12, nB=Math.round(d.cue*d.pop/1e5*12);
+  const TLAB={'Adoption':'Adoption','Value Realization':'Value Realization','Onboarding':'Onboarding','Loyalty':'Loyalty','In renewal':'In renewal','Churned (In Transition)':'Churned (in transition)'};
+  const CLAB={DK:'Danmark',SE:'Sverige','\u00c5land':'\u00c5land'};
+  el.innerHTML=
+    '<div class="er-result-head">Registrerede tal \u00b7 '+P.dbKom+'</div>'
+   +'<div class="er-headline">'
+   +'<div class="er-hn"><div class="er-hn-lab">For\u00e6ldre \u00b7 SES ONE</div><div class="er-hn-num">'+nF.toLocaleString('da-DK')+'</div><div class="er-hn-unit">brugere / \u00e5r \u00b7 \u2248'+d.mo+'/md \u00d7 12</div></div>'
+   +'<div class="er-hn"><div class="er-hn-lab">B\u00f8rn 6-17 \u00b7 SES NXT</div><div class="er-hn-num">'+nB.toLocaleString('da-DK')+'</div><div class="er-hn-unit">'+(d.cue>0?'afledt \u00b7 '+String(d.cue).replace('.',',')+'/100k/md \u00d7 12':'ingen NXT-aktivitet')+'</div></div>'
+   +'</div>'
+   +'<div class="er-quick">'+CLAB[d.c]+' \u00b7 status <b>'+TLAB[d.t]+'</b> \u00b7 <b>'+d.pop.toLocaleString('da-DK')+'</b> indbyggere \u00b7 licensstart '+d.start+'.</div>';
+}
+
 function buildContextInputs(){
   $('kommune').innerHTML='<option value="">— vælg kommune —</option>'+KOMMUNER.map(k=>'<option value="'+k+'">'+k+'</option>').join('');
   $('faggrupper').innerHTML=FAGGRUPPER.map(f=>'<div class="fg-row"><label for="fg-'+f.id+'">'+f.en+' <span class="fg-da">('+f.da+')</span></label><input type="number" id="fg-'+f.id+'" min="0" step="1" value="0"></div>').join('');
@@ -1119,7 +1412,8 @@ function renderTime(R,P){
 }
 function renderActor(R,P){
   const tot=R.econGrand||1;
-  $('actorbar').innerHTML=ACT.map(a=>R.econByActor[a]>0?`<span style="width:${R.econByActor[a]/tot*100}%;background:${ACT_COLOR[a]}" title="${ACT_LABEL[a]}: ${kr(R.econByActor[a])}"></span>`:'').join('');
+  const pos=ACT.reduce((s,a)=>s+(R.econByActor[a]>0?R.econByActor[a]:0),0)||1;
+  $('actorbar').innerHTML=ACT.map(a=>R.econByActor[a]>0?`<span style="width:${R.econByActor[a]/pos*100}%;background:${ACT_COLOR[a]}" title="${ACT_LABEL[a]}: ${kr(R.econByActor[a])}"></span>`:'').join('');
   $('public').textContent=kr(R.econByActor.kom+R.econByActor.reg+R.econByActor.stat);
   $('privsum').textContent=kr(R.econByActor.priv+R.econByActor.arb);
   $('actorRows').innerHTML=ACT.map(a=>`<tr><td><span class="dot" style="background:${ACT_COLOR[a]}"></span>${ACT_LABEL[a]}</td><td class="num">${kr(R.econF[a])}</td><td class="num">${kr(R.econB[a])}</td><td class="num">${kr(R.econByActor[a])}</td></tr>`).join('')+`<tr class="total"><td>I alt</td><td class="num">${kr(R.econPpF)}</td><td class="num">${kr(R.econPpB)}</td><td class="num">${kr(R.econGrand)}</td></tr>`;
@@ -1194,14 +1488,15 @@ function renderCEA(P){
 const ESTB0=3.5847,ESTB1=-0.135;
 const ESTRES=[[10,-0.6394],[25,-0.3695],[50,0.0618],[75,0.3402],[90,0.6265]];
 const ESTUE=[1.72,2.52,2.56,2.56,2.66,3.03,3.4,3.57,3.76,3.76,3.83,3.94,4.65,4.67,4.73,4.8,5,5.44,5.56,5.82,5.89,5.91,5.95,6.18,6.26,6.35,6.35,6.5,6.53,6.84,6.96,6.97,6.99,7.16,7.18,7.24,7.3,7.46,7.46,7.67,7.68,7.81,7.85,8.41,8.42,8.87,9.27,9.34,9.67,9.93,10.05,10.41,10.42,10.57,10.63,10.74,11.44,11.47,11.61,11.83,12.11,12.16,12.2,12.27,12.32,12.64,13.81,13.88,14.04,14.17,14.33,15.14,15.15,15.83,16.26,16.37,16.57,16.61,17.13,17.87,18.47,19.14,19.84,20.71,24.89,27.58,28.69,37.89];
-const ESTMAX=15.5;
+const ESTMAX=17;
 const ESTTRACKS=[
- {id:'web',label:'1 · Permanent digital tilstedeværelse',hint:'Fast skabelontekst + kommunetilpasset video på hjemmesiden. Engangsopsætning.',opts:[['Nej',0],['Ja',1.5]]},
- {id:'some',label:'2 · Løbende borgerrettet deling',hint:'Opslag på AULA / sociale medier via årshjulet. Eneste spor med frekvens.',opts:[['Ingen',0],['Lejlighedsvis',1.5],['Fast kvartalsvis',3],['Intensiv',4.5]]},
- {id:'fysisk',label:'3 · Fysisk synlighed',hint:'Plakater, postkort og QR på skoler, biblioteker, sundheds- og lægehuse.',opts:[['Ingen',0],['Få steder',1],['Mange steder',2],['Bredt udrullet',3]]},
- {id:'intern',label:'4 · Intern henvisningsmobilisering',hint:'E-mails til faggrupper: PPR, sundhedspleje, skoler, dagtilbud, familieafd.',opts:[['Ingen',0],['Udvalgte faggrupper',1.5],['Bredt på tværs',3]]},
- {id:'pro',label:'5 · SES PRO faglig integration',hint:'Samtaler, gruppeforløb, opkvalificering — kræver PRO-licens.',opts:[['Ingen',0],['Delvist',1.5],['Fuldt integreret',2.5]]},
- {id:'ledelse',label:'6 · Ledelses- & politisk forankring',hint:'Sikrer at de øvrige spor faktisk kører over tid.',opts:[['Nej',0],['Ja',1]]}
+ {id:'web',label:'1 · Ønskes synlighed i kommunens digitale rum?',hint:'Fast skabelontekst + kommunetilpasset video på hjemmesiden. Engangsopsætning.',opts:[['Nej',0],['Ja',1.5]]},
+ {id:'some',label:'2 · Hvor ofte vil vi dele borgerrettede opslag på AULA og sociale medier?',hint:'Opslag på AULA / sociale medier via årshjulet. Eneste spor med frekvens.',opts:[['Aldrig',0],['Lejlighedsvis',1.5],['Kvartalsvis',3],['Månedlig eller fastgjorte opslag',4.5]]},
+ {id:'fysisk',label:'3 · Ønskes synlighed i kommunens fysiske rum – fx på skoler, dagtilbud, biblioteker, sundheds- og lægehuse?',hint:'Plakater, postkort og QR på skoler, biblioteker, sundheds- og lægehuse.',opts:[['Ingen',0],['Få steder',1],['Udvalgte steder',2],['Bredt udrullet',3]]},
+ {id:'intern',label:'4 · Hvor bredt vil vi udbrede internt blandt fagpersoner?',hint:'E-mails til faggrupper: PPR, sundhedspleje, skoler, dagtilbud, familieafd.',opts:[['Ingen',0],['Udvalgte faggrupper',1.5],['Bredt på tværs af skole-, dagtilbud og socialområdet',3]]},
+ {id:'pro',label:'5 · Vil vi tilbyde støttede forløb gennem det specialiserede område?',hint:'Samtaler, gruppeforløb, opkvalificering — kræver PRO-licens.',opts:[['Ingen',0],['Samtaleforløb',1.5],['Gruppetilbud',2.5],['Samtaleforløb + gruppetilbud',3]]},
+ {id:'konsulent',label:'6 · Vil vi udpege en udviklingskonsulent til at stå for udbredelsen?',hint:'En udpeget tovholder driver udbredelsen i praksis.',opts:[['Nej',0],['Ja',1]]},
+ {id:'ledelse',label:'7 · Er indsatsen forankret på direktør- eller centerchefsniveau?',hint:'Sikrer at de øvrige spor faktisk kører over tid.',opts:[['Nej',0],['Ja',1]]}
 ];
 const fmtDa1=x=>x.toLocaleString('da-DK',{minimumFractionDigits:1,maximumFractionDigits:1});
 function estInterpLog(p){ p=Math.max(10,Math.min(90,p)); for(let i=0;i<ESTRES.length-1;i++){const [p0,v0]=ESTRES[i],[p1,v1]=ESTRES[i+1]; if(p<=p1) return v0+(v1-v0)*(p-p0)/(p1-p0);} return ESTRES[ESTRES.length-1][1]; }
@@ -1274,7 +1569,7 @@ function buildMethodCards(){
     const can=m.can.map(x=>'<li>'+x+'</li>').join('');
     const cannot=m.cannot.map(x=>'<li>'+x+'</li>').join('');
     const status=m.status?'<span class="mc-status '+m.status+'">'+m.status+'</span>':'';
-    return '<button class="mcard" id="mc-'+m.id+'" type="button">'
+    return '<button class="mcard" id="mc-'+m.id+'" type="button" aria-pressed="false">'
       +'<div class="mc-top"><span class="mc-name">'+m.name+'</span>'+status+'</div>'
       +'<div class="mc-method">'+m.method+'</div>'
       +'<div class="mc-can"><span class="mc-lbl ok">Kan vise</span><ul>'+can+'</ul></div>'
@@ -1288,7 +1583,7 @@ function buildMethodCards(){
 }
 function buildLog(P,R,sel,ovs){
   const pct=v=>(v*100).toLocaleString('da-DK')+' %';
-  const sv=P.schoolValue===41600?'Netto 41.600 kr. (base case)':(P.schoolValue===75000?'Brutto 75.000 kr. (scenarie)':kr(P.schoolValue));
+  const sv=P.schoolValue===41600?'41.600 kr. (base case, netto)':(P.schoolValue===74000?'74.000 kr. (ADHD/autisme-følsomhed)':kr(P.schoolValue));
   const persp=PERSP_LABEL[P.perspective]||'Tilpasset';
   const w='kommune '+pct(P.wKom)+', region '+pct(P.wReg)+', stat '+pct(P.wStat)+', arbejdsplads '+pct(P.wArb)+', borger '+pct(P.wPriv);
   const row=(k,v)=>'<tr><td>'+k+'</td><td>'+v+'</td></tr>';
@@ -1317,8 +1612,19 @@ function buildLog(P,R,sel,ovs){
      +row('NXT-børn (afledt)',Math.round(C.perYr*P.nxtRatio).toLocaleString('da-DK')+'/år (× '+String(P.nxtRatio).replace('.',',')+', ikke datafittet)')
      +row('Datagrundlag','fittet på etablerede kommuner i udtræk af 107 nordiske kommuner; effort-spændet rummer også lokale forhold → scenarie-skøn');
   }
+  if(P.userMode==='database'){ const d=SFDATA[P.dbKom];
+    h+='<tr class="grp"><td colspan="2">Brugertal fra databasen (Salesforce-udtræk)</td></tr>';
+    if(d){ const nB2=Math.round(d.cue*d.pop/1e5*12);
+      h+=row('Kilde','Salesforce-udtræk pr. 14.06.2026 · 107 kommuner med SES-licens')
+       +row('Valgt kommune',P.dbKom+' ('+({DK:'Danmark',SE:'Sverige','Åland':'Åland'}[d.c])+' · '+d.t+')')
+       +row('Registrerede ONE-brugere','≈'+d.mo+' voksne/md → '+(d.mo*12).toLocaleString('da-DK')+'/år (× 12)')
+       +row('NXT-børn (afledt)',nB2.toLocaleString('da-DK')+'/år ('+String(d.cue).replace('.',',')+' NXT/100k/md × 12)')
+       +row('Licensstart',d.start)
+       +row('Årskonvertering','måned → år ved × 12 (samme konvention som estimatoren)');
+    } else { h+=row('Valgt kommune','ingen valgt — vælg en kommune i databasen'); }
+  }
   h+='<tr class="grp"><td colspan="2">Perspektiv &amp; vægte (gælder økonomiske spor)</td></tr>'+row('Valgt perspektiv',persp)+row('Aktørvægte',w);
-  if(P.sel.budget) h+='<tr class="grp"><td colspan="2">Skolefravær · SØM</td></tr>'+row('Værdi pr. barn ud af bekymrende fravær',sv)+row('Andel børn ud af fravær',pct(P.schoolShare))+row('Fordeling kom/reg/stat',pct(P.sKom)+' / '+pct(P.sReg)+' / '+pct(P.sStat))+row('Tidsvindue','10 år');
+  if(P.sel.budget){ const sc=P.schoolValue/(P.schoolGross+P.schoolEdu); const gK=P.schoolGross*sc*P.gKom,gR=P.schoolGross*sc*P.gReg,gS=P.schoolGross*sc*P.gStat,ed=P.schoolEdu*sc; h+='<tr class="grp"><td colspan="2">Skolefravær · SØM</td></tr>'+row('Værdi pr. barn ud af bekymrende fravær',sv)+row('Andel børn ud af fravær',pct(P.schoolShare))+row('Bruttobesparelse (fordeling)','kommune '+kr(gK)+' · region '+kr(gR)+' · stat '+kr(gS))+row('Øgede uddannelsesudgifter (staten)',kr(ed))+row('Netto pr. barn — kommunen høster >90 %',kr(gK+gR+gS+ed))+row('Tidsvindue','10 år'); }
   if(P.sel.produktion) h+='<tr class="grp"><td colspan="2">Produktion &amp; arbejdsmarked</td></tr>'+row('Produktionsværdi pr. dag',kr(P.prod))+row('Skatte-/overførselssats',pct(P.tax))+row('Indkomstgevinst pr. forælder · 5 år',kr(P.income)+' (trend, p=.10)');
   if(P.sel.qaly) h+='<tr class="grp"><td colspan="2">QALY (antagelse)</td></tr>'+row('QALY-værdi',kr(P.qaly))+row('Gevinst voksen / barn pr. år',String(P.adultGain).replace('.',',')+' / '+String(P.childGain).replace('.',','))+row('Varighed',P.years+' år')+row('Mapping','foreløbig antagelse; SF-6D for voksne undersøges senere');
   if(P.sel.wellby) h+='<tr class="grp"><td colspan="2">WELLBY (scenarie)</td></tr>'+row('Antaget livstilfredshed-point voksen / barn',String(P.wbAdult).replace('.',',')+' / '+String(P.wbChild).replace('.',',')+' (barn mere eksplorativt)')+row('WELLBY-værdi pr. point-år',kr(P.wbValue))+row('Haircut',pct(P.wbHaircut))+row('Varighed',P.years+' år')+row('Anker','voksne: mental sundhed (SF-36 d=1,86) · børn: HRQoL (d=0,84)');
@@ -1361,15 +1667,19 @@ function scopeHTML(R,P,sel){
     +sel.map(m=>scopeCard(m,R,P)).join('');
 }
 function render(){
+  if(!DB_MODE_ENABLED && P.userMode==='database') P.userMode='estimate';
   const sel=selList(P); const any=sel.length>0;
   if(P.userMode==='estimate'){ if(P.estComputed){ const C=estCompute(P); P.nF=Math.round(C.perYr); P.nB=Math.round(C.perYr*P.nxtRatio); } else { P.nF=0; P.nB=0; } }
+  if(P.userMode==='database'){ const d=SFDATA[P.dbKom]; if(d){ P.nF=d.mo*12; P.nB=Math.round(d.cue*d.pop/1e5*12); P.nInhab=d.pop; const ni=$('nInhab'); if(ni&&ni!==document.activeElement&&ni.value!=String(d.pop)) ni.value=d.pop; } else { P.nF=0; P.nB=0; } }
   if($('komContext')){ const kd=KOMMUNEDATA[P.kommune]; $('komContext').innerHTML = kd ? 'SES anslår en målgruppe i '+P.kommune+' på ca. <b>'+kd[1].toLocaleString('da-DK')+'</b> voksne og <b>'+kd[2].toLocaleString('da-DK')+'</b> børn berørt af skilsmisse/samlivsbrud — den adresserbare pulje, ikke forventede brugere.' : ''; }
   if($('umManual')){ $('umManual').setAttribute('aria-pressed',P.userMode==='manual'); $('umEstimate').setAttribute('aria-pressed',P.userMode==='estimate'); }
-  show('userManual',P.userMode==='manual'); show('userEstimate',P.userMode==='estimate');
+  if($('umDatabase')) $('umDatabase').setAttribute('aria-pressed',P.userMode==='database');
+  show('userManual',P.userMode==='manual'); show('userEstimate',P.userMode==='estimate'); show('userDatabase',P.userMode==='database');
+  if(P.userMode==='database'&&$('dbResult')) renderDatabase(P);
   if(P.userMode==='manual'){['nF','nB'].forEach(id=>{const el=$(id);if(el&&el!==document.activeElement&&el.value!=String(P[id]))el.value=P[id];});}
   if($('estCalc')){ show('estCalc',P.userMode==='estimate'&&!P.estComputed); $('estCalc').disabled=!P.nInhab; }
   if(P.userMode==='estimate'&&$('estResult')) renderEstimate(P);
-  METHODS.forEach(m=>{ const el=$('mc-'+m.id); if(el) el.classList.toggle('active',!!P.sel[m.id]); });
+  METHODS.forEach(m=>{ const el=$('mc-'+m.id); if(el){ el.classList.toggle('active',!!P.sel[m.id]); el.setAttribute('aria-pressed',!!P.sel[m.id]); } });
   show('emptyState',!any);
   ['scopePanel','coveragePanel','ccaPanel','logPanel'].forEach(id=>show(id,any));
   const R=compute(P);
@@ -1557,14 +1867,20 @@ $('adjPrimary').addEventListener('change',()=>{P.adjPrimary=$('adjPrimary').valu
 $('adjHaircut').addEventListener('input',()=>{const v=parseFloat($('adjHaircut').value);if(!isNaN(v)){P.adjHaircut=Math.min(1,Math.max(0,v/100));render();}});
 buildMethodCards();
 buildContextInputs();
-$('kommune').addEventListener('change',()=>{P.kommune=$('kommune').value;const d=KOMMUNEDATA[P.kommune];if(d){P.nInhab=d[0];$('nInhab').value=d[0];}P.estComputed=false;render();});
+$('kommune').addEventListener('change',()=>{P.kommune=$('kommune').value;const d=KOMMUNEDATA[P.kommune];if(d){P.nInhab=d[0];$('nInhab').value=d[0];}P.estComputed=false;
+  if(P.userMode==='database'){ const sf=DKTOSF[P.kommune]||''; P.dbKom=sf; if($('dbKom'))$('dbKom').value=sf; if(sf){P.nInhab=SFDATA[sf].pop;$('nInhab').value=SFDATA[sf].pop;} }
+  render();});
 ['nInhab','nMunEmp'].forEach(id=>{ $(id).addEventListener('input',()=>{const v=$(id).value;P[id]=v===''?null:Math.max(0,parseInt(v)||0);if(id==='nInhab')P.estComputed=false;render();}); });
 $('umManual').addEventListener('click',()=>{P.userMode='manual';render();});
 $('umEstimate').addEventListener('click',()=>{P.userMode='estimate';render();});
+$('umDatabase').addEventListener('click',()=>{P.userMode='database';render();});
+buildDbPicker();
+show('umDatabase', DB_MODE_ENABLED);
+$('dbKom').addEventListener('change',()=>{ P.dbKom=$('dbKom').value; const d=SFDATA[P.dbKom]; if(d){ P.nInhab=d.pop; $('nInhab').value=d.pop; P.kommune=d.dk||'Andet / international'; $('kommune').value=P.kommune; } render(); });
 buildEstimator();
 $('estCalc').addEventListener('click',()=>{ if(P.nInhab){ P.estComputed=true; render(); } });
 
-$('sBrutto').addEventListener('click',()=>{P.schoolValue=75000;$('sBrutto').setAttribute('aria-pressed',true);$('sNetto').setAttribute('aria-pressed',false);render();});
+$('sBrutto').addEventListener('click',()=>{P.schoolValue=74000;$('sBrutto').setAttribute('aria-pressed',true);$('sNetto').setAttribute('aria-pressed',false);render();});
 $('sNetto').addEventListener('click',()=>{P.schoolValue=41600;$('sNetto').setAttribute('aria-pressed',true);$('sBrutto').setAttribute('aria-pressed',false);render();});
 
 buildPerspControls();
@@ -1578,13 +1894,393 @@ function syncInputs(){
   $('wbAdult').value=P.wbAdult; $('wbChild').value=P.wbChild; $('wbValue').value=P.wbValue; $('wbHaircut').value=P.wbHaircut;
   $('adjPrimary').value=P.adjPrimary; $('adjHaircut').value=Math.round(P.adjHaircut*100);
   document.querySelectorAll('input[name=adj]').forEach(r=>{r.checked=(r.value===P.adjMode);});
-  $('nP').value=P.nP; $('kommune').value=P.kommune; $('nInhab').value=P.nInhab==null?'':P.nInhab; $('nMunEmp').value=P.nMunEmp==null?'':P.nMunEmp;
+  $('nP').value=P.nP; $('kommune').value=P.kommune; if($('dbKom'))$('dbKom').value=P.dbKom; $('nInhab').value=P.nInhab==null?'':P.nInhab; $('nMunEmp').value=P.nMunEmp==null?'':P.nMunEmp;
   $('nxtRatio').value=P.nxtRatio;
   FAGGRUPPER.forEach(f=>{const el=$('fg-'+f.id);if(el)el.value=P.fag[f.id]||0;});
-  $('sBrutto').setAttribute('aria-pressed',P.schoolValue===75000); $('sNetto').setAttribute('aria-pressed',P.schoolValue===41600);
+  $('sBrutto').setAttribute('aria-pressed',P.schoolValue===74000); $('sNetto').setAttribute('aria-pressed',P.schoolValue===41600);
   syncPersp();
 }
 $('reset').addEventListener('click',()=>{P=JSON.parse(JSON.stringify(DEFAULTS));syncInputs();render();});
+
+
+/* ====== INDSAT: Impactrapport-generator ====== */
+/* ===== Impactrapport-udkast (til NHG-review) =====
+   Genererer et struktureret arbejdsdokument ud fra modellens aktuelle valg.
+   Princip: KUN værdiskabelse. Ingen licens-/udbredelsesudgifter, ingen ROI.
+   Fordelingen beregnes med alle aktører vægtet (samfundsperspektiv), så hele
+   billedet vises uanset det perspektiv, der er valgt på skærmen. */
+
+
+const REPORT_NHG=[
+ 'Om rapportens struktur er fagligt og kommunikativt hensigtsmæssig.',
+ 'Om de valgte hovedfund er de rigtige, eller om nogle bør udskiftes.',
+ 'Om de økonomiske beregninger og enhedspriser er metodisk forsvarlige.',
+ 'Om aktørfordelingen mellem kommune, region, stat, arbejdsplads og familie er korrekt.',
+ 'Om forbeholdene er tilstrækkelige og afbalancerede.',
+ 'Om der er risiko for dobbelttælling mellem posterne.',
+ 'Om nogle resultater bør flyttes, nedtones, fjernes eller omformuleres.',
+ 'Om executive summary kan stå alene eksternt over for en kommunal beslutningstager.',
+];
+
+function repActorData(P){
+  const P2=Object.assign(JSON.parse(JSON.stringify(P)),{wKom:1,wReg:1,wStat:1,wArb:1,wPriv:1,perspective:'samfund'});
+  const R=compute(P2);
+  const welfare=(R.qaly?R.qaly.grand:0)+(R.wb?R.wb.cohortKr:0);
+  const rows=[
+    {key:'kom',label:'Kommune',val:R.econByActor.kom},
+    {key:'reg',label:'Region',val:R.econByActor.reg},
+    {key:'stat',label:'Stat',val:R.econByActor.stat},
+    {key:'arb',label:'Arbejdsplads',val:R.econByActor.arb},
+    {key:'priv',label:'Familie / borger',val:R.econByActor.priv+welfare},
+  ];
+  const total=rows.reduce((s,r)=>s+r.val,0);
+  return {P2,R,rows,total,welfare};
+}
+function repBars(rows,total){
+  const max=Math.max(1,...rows.map(r=>Math.abs(r.val)));
+  const posTotal=rows.reduce((s,r)=>s+(r.val>0?r.val:0),0);
+  return '<div class="ro-bars">'+rows.map(r=>{
+    const neg=r.val<0;
+    const pct=posTotal>0&&r.val>0?Math.round(r.val/posTotal*100):0;
+    const w=Math.max(0,Math.round(Math.abs(r.val)/max*100));
+    return '<div class="ro-bar"><div class="ro-bl">'+r.label+'</div><div class="ro-bt"><div class="ro-bf'+(neg?' ro-bf-neg':'')+'" style="width:'+w+'%;background:'+(neg?'var(--warn)':'var(--'+r.key+')')+'"></div></div><div class="ro-bv">'+kr(r.val)+(neg?' <span class="ro-bp">nettoudgift</span>':' <span class="ro-bp">'+pct+' %</span>')+'</div></div>';
+  }).join('')+'</div>';
+}
+
+function repPie(rows,total){
+  const posTotal=rows.reduce((s,r)=>s+(r.val>0?r.val:0),0);
+  if(posTotal<=0) return '';
+  const cx=90,cy=90,r=80,positive=rows.filter(x=>x.val>0);
+  let segs='';
+  if(positive.length===1){ segs='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="var(--'+positive[0].key+')"/>'; }
+  else { let ang=-Math.PI/2; positive.forEach(row=>{ const frac=row.val/posTotal; const a2=ang+frac*2*Math.PI;
+    const x1=(cx+r*Math.cos(ang)).toFixed(2), y1=(cy+r*Math.sin(ang)).toFixed(2);
+    const x2=(cx+r*Math.cos(a2)).toFixed(2), y2=(cy+r*Math.sin(a2)).toFixed(2);
+    const large=frac>0.5?1:0;
+    segs+='<path d="M'+cx+' '+cy+' L'+x1+' '+y1+' A'+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' Z" fill="var(--'+row.key+')"/>';
+    ang=a2; }); }
+  const legend=positive.map(x=>'<div class="ro-leg"><span class="ro-dot" style="background:var(--'+x.key+')"></span>'+x.label+' <strong>'+Math.round(x.val/posTotal*100)+' %</strong></div>').join('')
+   +rows.filter(x=>x.val<0).map(x=>'<div class="ro-leg ro-leg-neg"><span class="ro-dot" style="background:var(--warn)"></span>'+x.label+' <strong>'+kr(x.val)+'</strong> · nettoudgift</div>').join('');
+  return '<div class="ro-pie"><svg viewBox="0 0 180 180" width="172" height="172" role="img" aria-label="Aktørfordeling af gevinster; eventuelle nettoudgifter vises separat">'+segs+'<circle cx="'+cx+'" cy="'+cy+'" r="46" fill="#fff"/></svg><div class="ro-legend">'+legend+'</div></div>';
+}
+function repCalcFold(P){
+  const fmt=n=>Math.round(n).toLocaleString('da-DK');
+  const NAMES={kom:'kommune',reg:'region',stat:'stat',arb:'arbejdsplads',priv:'borger'};
+  const split=o=>ACT.map(a=>o[a]?NAMES[a]+' '+fmt(o[a]):null).filter(Boolean).join(' · ');
+  const rowFor=(e,af)=>{ af=(af==null)?1:af; const o0=ppActor(e,P); const o={}; ACT.forEach(a=>o[a]=(o0[a]||0)*af); const tot=ACT.reduce((s,a)=>s+o[a],0);
+    return '<tr><td>'+e.label+(af<1?' <span class="ro-bp">(haircut)</span>':'')+'</td><td>'+e.basis+'</td><td>'+kr(tot)+'</td><td>'+(split(o)||'—')+'</td></tr>'; };
+  let rows='';
+  if(P.sel.budget) ONE.forEach(e=>{ if(e.track==='budget') rows+=rowFor(e,1); });
+  if(P.sel.produktion) ONE.forEach(e=>{ if(e.track==='produktion'){ const af=adjFactor(e.id,P); if(af===0) return; rows+=rowFor(e,af); } });
+  if(P.sel.budget) NXT.forEach(e=>{ rows+=rowFor(e,1); });
+  if(!rows) return '';
+  return '<details class="ro-fold"><summary>Vis den nøjagtige udregning bag de beregnede tal (pr. person)</summary><div class="ro-fold-body">'
+    +'<p class="ro-small">Hver effekt = effektstørrelse × SØM-enhedspris, fordelt på de aktører, der bærer omkostningen eller høster gevinsten. Beløbene er pr. person og udiskonterede (summen over effektens tidsvindue); nutidsværdien i tabellen ovenfor diskonterer beløbene år for år med '+(P.discount*100).toLocaleString('da-DK')+' %. Negative beløb (fx staten på skolefravær, der bærer uddannelsesudgiften) er nettoudgifter.</p>'
+    +'<table class="ro-table"><thead><tr><th>Effekt</th><th>Datagrundlag</th><th>Værdi pr. person</th><th>Aktørfordeling (kr.)</th></tr></thead><tbody>'+rows+'</tbody></table>'
+    +'<p class="ro-small ro-fnote">Enhedspriser: SØM v3.4 (2025-priser). Skolefravær vises samlet — dens opdeling i delposter (sociale indsatser, overførsler, uddannelse) findes i afsnit 4. Velfærdsværdi (WELLBY/QALY) indgår ikke her, men vises separat som et borger-lag.</p>'
+    +'</div></details>';
+}
+function reportHTML(P){
+  const A=repActorData(P);
+  const R=A.R;
+  const methods=METHODS.filter(m=>P.sel[m.id]&&['budget','produktion','wellby','qaly'].includes(m.id));
+  const methodNames=methods.length?methods.map(m=>m.name).join(', '):'ingen valgt';
+  const welfareOn=P.sel.wellby||P.sel.qaly;
+  const wAdult=(R.qaly?R.qaly.ppF:0)+(R.wb?R.wb.aKr:0);
+  const wChild=(R.qaly?R.qaly.ppB:0)+(R.wb?R.wb.cKr:0);
+  const ppF=R.econPpF+wAdult;
+  const ppB=R.econPpB+wChild;
+  const npv=cumAt(10,A.P2,true);
+  const npvF=npv.ppF, npvB=npv.ppB, npv10=npv.grand;
+  const ppRows=[
+    {key:'kom',label:'Kommune',val:R.econF.kom+R.econB.kom},
+    {key:'reg',label:'Region',val:R.econF.reg+R.econB.reg},
+    {key:'stat',label:'Stat',val:R.econF.stat+R.econB.stat},
+    {key:'arb',label:'Arbejdsplads',val:R.econF.arb+R.econB.arb},
+    {key:'priv',label:'Familie / borger',val:R.econF.priv+R.econB.priv+wAdult+wChild},
+  ];
+  const ppTotal=ppRows.reduce((s,r)=>s+r.val,0);
+  const komPpPct=ppTotal>0?Math.round(ppRows[0].val/ppTotal*100):0;
+  const offPpPct=ppTotal>0?Math.round((ppRows[0].val+ppRows[1].val+ppRows[2].val)/ppTotal*100):0;
+  const adultRows=[{key:'kom',label:'Kommune',val:R.econF.kom},{key:'reg',label:'Region',val:R.econF.reg},{key:'stat',label:'Stat',val:R.econF.stat},{key:'arb',label:'Arbejdsplads',val:R.econF.arb},{key:'priv',label:'Familie / borger',val:R.econF.priv+wAdult}];
+  const childRows=[{key:'kom',label:'Kommune',val:R.econB.kom},{key:'reg',label:'Region',val:R.econB.reg},{key:'stat',label:'Stat',val:R.econB.stat},{key:'arb',label:'Arbejdsplads',val:R.econB.arb},{key:'priv',label:'Familie / borger',val:R.econB.priv+wChild}];
+  const adultTotal=adultRows.reduce((s,r)=>s+r.val,0);
+  const childTotal=childRows.reduce((s,r)=>s+r.val,0);
+  const kom=A.rows[0].val, komPct=A.total>0?Math.round(kom/A.total*100):0;
+  const offentlig=A.rows[0].val+A.rows[1].val+A.rows[2].val;
+  const offPct=A.total>0?Math.round(offentlig/A.total*100):0;
+  const hasKom=P.kommune&&P.kommune!=='Andet / international';
+  const hasUsers=(P.nF||0)>0||(P.nB||0)>0;
+  const hasScenario=hasKom&&hasUsers;
+  const komNavn=hasKom?P.kommune:'den enkelte kommune';
+  const dato=new Date().toLocaleDateString('da-DK',{year:'numeric',month:'long',day:'numeric'});
+  const adjNote={warn:'Mulige overlap er markeret, men ikke fratrukket (bør afklares af NHG).',exclude:'Overlappende poster (langtidssygefravær og indkomst) er udeladt.',primary:'Kun den primære overlapspost er medtaget.',haircut:'Sekundære overlapsposter er reduceret med en haircut.',parallel:'Overlappende poster vises parallelt og summeres ikke.'}[P.adjMode]||'';
+
+  const H=[];
+  const sec=(n,title)=>H.push('<h2 class="ro-h2"><span class="ro-num">'+n+'</span>'+title+'</h2>');
+  const p=t=>H.push('<p>'+t+'</p>');
+  const small=t=>H.push('<p class="ro-small">'+t+'</p>');
+  const ul=items=>H.push('<ul>'+items.map(i=>'<li>'+i+'</li>').join('')+'</ul>');
+
+  // Forside
+  H.push('<div class="ro-cover">'
+    +'<div class="ro-badge">Udkast til impactrapport · til fagligt review</div>'
+    +'<h1 class="ro-title">'+(hasScenario?'SES Family — værdiskabelse for '+P.kommune:'SES Family — værdiskabelse efter skilsmisse og samlivsbrud')+'</h1>'
+    +'<p class="ro-sub">Et struktureret arbejdsdokument, der oversætter de dokumenterede effekter af SES Family til økonomisk og samfundsmæssig værdi. Udarbejdet som grundlag for et uafhængigt fagligt review.</p>'
+    +'<div class="ro-meta"><span>Genereret '+dato+'</span><span>Status: udkast</span><span>Til: fagligt review (NHG)</span></div>'
+    +'<p class="ro-disc">Dette er et modelgenereret udkast, ikke en endelig vurdering. Tal, metodevalg og formuleringer skal kvalitetssikres, udfordres og tilpasses af den faglige reviewer, før dokumentet anvendes eksternt.</p>'
+    +'</div>');
+
+  // 1 Executive summary
+  sec('1','Executive summary');
+  p('SES Family er et digitalt indsatsprogram udviklet på Københavns Universitet, der støtter børn, unge, forældre og fagpersoner gennem skilsmisse og samlivsbrud. Programmet består af tre værktøjer — <strong>SES ONE</strong> (forældre), <strong>SES NXT</strong> (børn og unge) og <strong>SES PRO</strong> (fagpersoner) — og anvendes i fire lande og i mere end 180 nordiske kommuner.');
+  p('Skilsmisse og samlivsbrud er en væsentlig folkesundhedsproblematik, der berører en stor andel af børnefamilierne og er overrepræsenteret i sociale sager og kommunale indsatser. SES Family adresserer problematikken digitalt og skalerbart.');
+  p('Denne rapport bygger på tre forskningsprojekter: et 12-måneders randomiseret kontrolleret studie (RCT) af SES ONE, en 5-årig registeropfølgning af samme kohorte, samt et RCT af SES NXT blandt børn og unge. På tværs af studierne dokumenteres effekter på mental sundhed, stress, konflikt, skolefravær, sygedage og sundhedsforbrug. Dokumentationsgrundlaget er usædvanligt stærkt på dette felt, fordi effekterne ikke kun er selvrapporterede, men for de voksnes vedkommende også genfindes i nationale registre. Rapporten oversætter konservativt de bedst dokumenterede effekter til kroner.');
+  p('Pr. voksen/forælder kan der ud fra de valgte metoder ('+methodNames+') afledes en værdi i størrelsesordenen <strong>'+kr(ppF)+'</strong>, og pr. barn/ung ca. <strong>'+kr(ppB)+'</strong>.');
+  p('Værdien fordeler sig bredt på tværs af aktører: ca. <strong>'+komPpPct+' %</strong> tilfalder kommunen, mens den samlede offentlige andel (kommune, region og stat) udgør ca. <strong>'+offPpPct+' %</strong>. En betydelig del af værdien realiseres uden for kommunekassen — fx hos familien, på arbejdsmarkedet og i regionen.');
+  if(hasScenario) p('Anvendt på '+komNavn+' med et planlægningsscenarie på ca. <strong>'+(P.nF||0).toLocaleString('da-DK')+' forældre</strong> og <strong>'+(P.nB||0).toLocaleString('da-DK')+' børn/unge</strong> om året svarer det til en samlet værdiskabelse i størrelsesordenen <strong>'+krMio(A.total)+'</strong> (udiskonteret, på tværs af aktører).');
+  small('<strong>Forbehold i kort form:</strong> Tallene er et vejledende og bevidst konservativt skøn — ikke en garanti. De bygger på RCT-effekter ganget med SØM-enhedspriser; RCT-resultater er ikke nødvendigvis direkte overførbare til fuld kommunal drift, statistisk usikkerhed er ikke regnet ind, og resultatet afhænger af de indtastede forudsætninger. De fulde forbehold står i metodeafsnittet og i afsnit 9.');
+
+  // 2 Indledning
+  sec('2','Indledning');
+  p('SES Family er udviklet på Københavns Universitet og består af tre værktøjer, der hver henvender sig til en del af familien omkring et brud: SES ONE til forældre, SES NXT til børn og unge, og SES PRO til fagpersoner.');
+  p('Programmet er udbredt i fire lande og mere end 180 nordiske kommuner. Skilsmisse og samlivsbrud er en væsentlig folkesundhedsproblematik, som er overrepræsenteret i sociale sager og kommunale indsatser. SES Family arbejder digitalt og skalerbart med støtte til både børn, unge, forældre og de fagpersoner, der møder familierne.');
+
+  // 3 Forskningen bag
+  sec('3','Forskningen bag SES Family');
+  p('Rapporten hviler på tre centrale studier. For hvert studie angives målgruppe, design, hovedresultater og hvilke effekter der henholdsvis indgår og ikke indgår i den økonomiske beregning.');
+  H.push('<div class="ro-study"><h3>SES ONE — 12-måneders RCT</h3>'
+    +'<p><em>Målgruppe:</em> nyligt fraskilte voksne (n=1.856). <em>Design:</em> randomiseret kontrolleret studie med opfølgning efter 3, 6 og 12 måneder.</p>'
+    +'<p><em>Hovedresultater:</em> stærke og vedvarende forbedringer i mental sundhed, stress, depression, angst og somatisering. <em>I økonomien:</em> sygedage (produktion). <em>Ikke omsat til økonomi her:</em> oplevet trivsel og symptomniveau (medmindre en velfærdsmetode vælges).</p></div>');
+  H.push('<div class="ro-study"><h3>SES ONE — 5-års registeropfølgning</h3>'
+    +'<p><em>Målgruppe:</em> samme kohorte, koblet til danske nationale registre. <em>Design:</em> registeropfølgning fem år efter skilsmissen (attrition 3,1 %).</p>'
+    +'<p><em>Hovedresultater:</em> ca. 28 % færre relevante psykofarmaka-recepter og lavere primærsektorforbrug i de første år. <em>I økonomien:</em> recepter og sundhedskontakter (budget). <em>Ikke robust:</em> en højere akkumuleret arbejdsmarkedsindkomst er kun en trend (p \u2248 0,10).</p></div>');
+  H.push('<div class="ro-study"><h3>SES NXT — RCT blandt børn og unge</h3>'
+    +'<p><em>Målgruppe:</em> 467 familier og 866 børn og unge (3-17 år). <em>Design:</em> randomiseret kontrolleret studie med opfølgning efter 4 og 12 uger.</p>'
+    +'<p><em>Hovedresultater:</em> markant bedre mental trivsel (SDQ), lavere forældrekonflikt, bedre livskvalitet og betydeligt lavere skolefravær. <em>I økonomien:</em> skolefravær (SØM/budget). <em>Ikke omsat til økonomi her:</em> trivsel, konflikt og livskvalitet (medmindre en velfærdsmetode vælges).</p></div>');
+
+  // 4 Hovedfund og regnestykker
+  sec('4','Hovedfund og regnestykker');
+  p('Hvert dokumenteret fund er sat op som et regnestykke: <em>effekt → hvilke offentlige udgifter den påvirker (+ besparelser, − merudgifter) pr. person i gennemsnit → nettobesparelse.</em> Fundene er delt i tre skemaer efter, hvem effekten gælder. Reduktion af problematisk skolefravær er foldet helt ud som skabelon; de øvrige poster har en fold ud med effektstørrelser, enhedspriser og kilder. <strong>Udvalg og opsætning er et oplæg, NHG kan ændre.</strong>');
+  const calcRow=(t,amt,cls)=>'<tr class="'+cls+'"><td>'+t+'</td><td class="ro-amt">'+amt+'</td></tr>';
+
+  H.push('<h3 class="ro-h3">4.A&nbsp;&nbsp;Børn og unge — SES NXT</h3>');
+  H.push('<p class="ro-small">Effekterne på børn og unge dokumenteres i SES NXT. Den økonomisk tungeste — reduktion af problematisk skolefravær — er foldet ud her som regnestykke-skabelon.</p>');
+  H.push('<div class="ro-effect">'
+    +'<div class="ro-eh"><span class="ro-et">SES NXT reducerer problematisk skolefravær</span><span class="ro-eb">ca. 56 % → 16 %</span></div>'
+    +'<p class="ro-small">→ udløser pr. barn i gennemsnit, opgjort over 10 år i SØM (nettonutidsværdi, 2023-priser):</p>'
+    +'<table class="ro-calc">'
+    +calcRow('Færre sociale indsatser til børn og unge (inkl. tabt arbejdsfortjeneste) + indkomstoverførsler','≈ +56.000 kr','pos')
+    +calcRow('Skat af indkomst, beskæftigelsesindsatser, politi/retsvæsen og sundhed','≈ +37.000 kr','pos')
+    +calcRow('Bruttobesparelse (før uddannelse)','ca. 93.400 kr','sub')
+    +calcRow('Øgede uddannelsesudgifter, fordi flere fortsætter i uddannelse','− 51.800 kr','neg')
+    +calcRow('Nettobesparelse pr. barn (gennemsnit)','ca. 41.600 kr','net')
+    +'</table>'
+    +'<p class="ro-note-adhd"><strong>Note.</strong> Potentialet er størst for børn med ADHD og autisme — ca. 74.000 kr. pr. barn. Det er netop dén symptomprofil, SES NXT adresserer: studiet viser en reduktion i SDQ-hyperaktivitet og uopmærksomhed (d ≈ 0,47). De øgede uddannelsesudgifter er allerede modregnet i tallene ovenfor — beløbene er altså <strong>nettobesparelser</strong>, ikke bruttotal. Kommunen høster mere end 90 % af nettogevinsten, regionen en mindre del, mens staten bærer uddannelsesudgiften. De enkelte udgiftsposter — med definitioner, enhedspriser og kilder — kan foldes ud nedenfor.</p>'
+    +'<details class="ro-fold"><summary>Vis de nøjagtige beregninger: definitioner, enhedspriser og kilder</summary><div class="ro-fold-body">'
+    +'<p class="ro-small">SØM beregner i fire trin: målgruppen afgrænses i registre, deles i en succes- og en ikke-succesgruppe, gruppernes forbrug følges i 10 år, og forskellen ganges med en enhedspris pr. aktør. Nedenfor er posterne bag de to største linjer, med definition (kilde: SØMs dokumentationsrapport v3.4, bilag C) og enhedspris (kilde: SØMs prisark, 2025-priser, kr. pr. enhed). Region = 0 på alle linjer — de er rent kommune/stat.</p>'
+    +'<p class="ro-flabel">Sociale indsatser til børn og unge</p>'
+    +'<table class="ro-table"><thead><tr><th>Post (enhed)</th><th>Dækker (bilag C)</th><th>Kommune</th><th>Stat</th><th>I alt</th><th>Medregnet</th></tr></thead><tbody>'
+    +'<tr><td>Forebyggende indsatser (modtager/år)</td><td>Forebyggende foranstaltninger, §-koder 400-405/407-409/452, børn under 18</td><td>23.212</td><td>930</td><td>24.142</td><td>Ja</td></tr>'
+    +'<tr><td>Støttende indsatser, 0-17 + efterværn 18-22 (modtager/år)</td><td>Støttende foranstaltninger + visse anbringelsessteder (eget værelse, kost-/efterskole)</td><td>131.920</td><td>6.346</td><td>138.265</td><td>Ja</td></tr>'
+    +'<tr><td>Tabt arbejdsfortjeneste (måned)</td><td>§42-ydelse til forælder, der passer barn med nedsat funktionsevne; knyttes til barnet</td><td>≈10.800</td><td>≈10.800</td><td>≈21.600</td><td>Ja</td></tr>'
+    +'<tr><td>Anbringelse: slægt/netværk · familiepleje · institution (dag)</td><td>Efter anbringelsessted-type (kilde: BUAF)</td><td>526 · 1.597 · 3.728</td><td>28 · 84 · 930</td><td>554 · 1.681 · 4.658</td><td>Nej</td></tr>'
+    +'</tbody></table>'
+    +'<p class="ro-small ro-fnote">Tabt arbejdsfortjeneste deles 50/50 kommune/stat (§42-refusion) og varierer ~20.300-22.800 kr./md. pr. delmålgruppe. Anbringelser er prissat i SØM, men <strong>ikke medregnet</strong> for skolefravær — de aktive sociale drivere er derfor forebyggende + støttende indsatser + tabt arbejdsfortjeneste.</p>'
+    +'<p class="ro-flabel">Indkomstoverførsler (kr. pr. uge · kilde: DREAM)</p>'
+    +'<table class="ro-table"><thead><tr><th>Post</th><th>Dækker (bilag C)</th><th>Kommune</th><th>Stat</th><th>I alt</th></tr></thead><tbody>'
+    +'<tr><td>Kontanthjælp (inkl. uddannelseshjælp)</td><td>Kontanthjælp + job-/uddannelsesparat uddannelseshjælp, ekskl. løntilskud</td><td>≈1.404</td><td>≈451</td><td>≈1.854</td></tr>'
+    +'<tr><td>Øvrige midlertidige overførsler</td><td>Dagpenge, sygedagpenge, revalidering, jobafklaring, ressourceforløb, ledighedsydelse</td><td>2.218</td><td>1.146</td><td>3.363</td></tr>'
+    +'<tr><td>Førtidspension</td><td>Førtidspension mv.</td><td>2.735</td><td>1.730</td><td>4.465</td></tr>'
+    +'</tbody></table>'
+    +'<p class="ro-small ro-fnote">Uddannelseshjælp har ikke sin egen prislinje i SØM — den ligger under Kontanthjælp (ydelseskoderne dækker job-/uddannelsesparate). Kontanthjælp deles ~76 % kommune / ~24 % stat.</p>'
+    +'<p class="ro-small ro-fnote"><strong>Forbehold:</strong> Tallene er enhedspriser. Den samlede kronebesparelse pr. kategori kræver desuden <em>antallet</em> af sparede enheder (succes- vs. ikke-succesgruppe over 10 år), som ligger i SØMs figurdata. Bruttoen (93.400 kr.), uddannelsesudgiften (51.800 kr.) og nettoen (41.600 kr.) er SØMs offentliggjorte resultattal. <strong>Kilder:</strong> SØMs dokumentationsrapport v3.4 (bilag C), SØMs prisark (enhedspriser) og Social- og Boligstyrelsens skolefraværsanalyse (resultattal).</p>'
+    +'</div></details>'
+    +'</div>');
+  H.push('<p class="ro-small" style="margin-top:14px">Øvrige dokumenterede fund for børn og unge:</p>');
+  H.push('<table class="ro-table"><thead><tr><th>Effekt (SES NXT)</th><th>Påvirker</th><th>Aktør</th><th>Værdisætning</th></tr></thead><tbody>'
+    +'<tr><td>Færre somatiske klager (OR ≈ 4,18)</td><td>Sundhedsydelser</td><td>Region</td><td>Budget</td></tr>'
+    +'<tr><td>Færre søvnproblemer (OR ≈ 3,99)</td><td>Sundhedsydelser</td><td>Region</td><td>Budget</td></tr>'
+    +'<tr><td>Færre ambulante kontakter</td><td>Sundhedsydelser</td><td>Region</td><td>Budget</td></tr>'
+    +'<tr><td>Bedre mental trivsel (SDQ d ≈ 0,71)</td><td>Livskvalitet — ikke en budgetpost</td><td>Familie/borger</td><td>WELLBY/QALY</td></tr>'
+    +'<tr><td>Lavere forældrekonflikt (d ≈ 0,62–0,67)</td><td>Mekanisme bag skole- og trivselseffekt</td><td>Familie/borger</td><td>Ikke selvstændigt værdisat</td></tr>'
+    +'</tbody></table>');
+  H.push('<details class="ro-fold"><summary>Vis enhedspriser bag de øvrige NXT-effekter</summary><div class="ro-fold-body">'
+    +'<p class="ro-small">De øvrige somatiske NXT-effekter værdisættes via regionale sundhedsudgifter (SØM, 2025-priser, kr. pr. enhed).</p>'
+    +'<table class="ro-table"><thead><tr><th>Effekt</th><th>Effektstørrelse</th><th>Enhedspris (SØM)</th><th>Aktør</th></tr></thead><tbody>'
+    +'<tr><td>Færre somatiske klager</td><td>OR ≈ 4,18 (p<.001)</td><td>144 kr. region + 18 kr. kommune</td><td>Region</td></tr>'
+    +'<tr><td>Færre søvnproblemer</td><td>OR ≈ 3,99 (p<.001)</td><td>626 kr. region + 3 kr. kommune</td><td>Region</td></tr>'
+    +'<tr><td>Færre ambulante kontakter</td><td>lavere somatisk ressourcebrug</td><td>2.365 kr. region + 588 kr. kommune</td><td>Region</td></tr>'
+    +'</tbody></table>'
+    +'<p class="ro-small ro-fnote">Mental trivsel (SDQ) og forældrekonflikt er ikke budgetposter og værdisættes kun via et velfærdslag (WELLBY/QALY), placeret hos familien/borgeren. <strong>Kilder:</strong> SES NXT RCT (effektstørrelser); SØMs prisark v3.4.</p>'
+    +'</div></details>');
+
+  H.push('<h3 class="ro-h3">4.B&nbsp;&nbsp;Voksne og forældre — SES ONE</h3>');
+  H.push('<p class="ro-small">Effekterne på de voksne dokumenteres i SES ONE. Posterne vises kompakt som overblik; fold ud nedenfor viser effektstørrelser, enhedspriser og kilder bag hver post (selve kroneværdien pr. voksen beregnes live i afsnit 6).</p>');
+  H.push('<table class="ro-table"><thead><tr><th>Effekt (SES ONE)</th><th>Sparer på</th><th>Aktør</th><th>Værdisætning</th></tr></thead><tbody>'
+    +'<tr><td>28 % færre psykofarmaka-recepter (IRR ≈ 0,72)</td><td>Medicintilskud</td><td>Region</td><td>Budget</td></tr>'
+    +'<tr><td>Færre kontakter til læge, psykolog og hospital</td><td>Sundhedsydelser</td><td>Region (+ kommune)</td><td>Budget</td></tr>'
+    +'<tr><td>Ca. 5,8 færre sygedage pr. år</td><td>Tabt produktion, sygedagpenge, skat</td><td>Arbejdsplads, kommune, stat</td><td>Produktion</td></tr>'
+    +'<tr><td>Mindre langtidssygefravær og kontanthjælp</td><td>Indkomstoverførsler</td><td>Kommune, stat</td><td>Produktion (trend)</td></tr>'
+    +'<tr><td>Højere indkomst (+5,2 %, p ≈ 0,10)</td><td>Skat af indkomst</td><td>Kommune, stat</td><td>Trend — ikke medregnet</td></tr>'
+    +'<tr><td>Bedre mental sundhed og lavere stress (SF-36 d ≈ 1,86; PSS d ≈ 2,21)</td><td>Livskvalitet — ikke en budgetpost</td><td>Familie/borger</td><td>WELLBY/QALY</td></tr>'
+    +'</tbody></table>');
+  H.push('<details class="ro-fold"><summary>Vis de nøjagtige beregninger: effektstørrelser, enhedspriser og kilder</summary><div class="ro-fold-body">'
+    +'<p class="ro-small">Hver voksen-effekt = effektstørrelse (fra RCT eller 5-års register) × SØM-enhedspris pr. aktør. Enhedspriserne er fra SØMs prisark (2025-priser, kr.); effektstørrelserne fra SES ONE-studierne. Den resulterende kroneværdi pr. voksen fremgår af den live udregning i afsnit 6.</p>'
+    +'<table class="ro-table"><thead><tr><th>Effekt</th><th>Effektstørrelse</th><th>Enhedspris (SØM)</th><th>Aktør</th><th>Type</th></tr></thead><tbody>'
+    +'<tr><td>Færre psykofarmaka-recepter</td><td>≈1,34 recepter/år, 28 % færre (IRR 0,72; 5-års register)</td><td>≈303 kr./recept (medicintilskud) + 1 kr. kommune</td><td>Region</td><td>Budget</td></tr>'
+    +'<tr><td>Færre alm. læge-kontakter</td><td>≈1,5 kontakter (OR ≈ 0,6–0,7, år 2–3)</td><td>140 kr. region + 21 kr. kommune pr. kontakt</td><td>Region/kommune</td><td>Budget</td></tr>'
+    +'<tr><td>Færre psykologkontakter</td><td>≈0,4 kontakter</td><td>689 kr. region + 54 kr. kommune pr. kontakt</td><td>Region/kommune</td><td>Budget</td></tr>'
+    +'<tr><td>Færre hospitalsindlæggelser</td><td>≈0,05 indlæggelser (OR 0,68; år 4)</td><td>10.438 kr. region + 2.779 kr. kommune pr. indlæggelse</td><td>Region/kommune</td><td>Budget</td></tr>'
+    +'<tr><td>Færre sygedage (år 1)</td><td>5,82 færre dage (d 0,26; p<.001)</td><td>pr. dag: produktionsværdi til arbejdsplads + 292 kr. stat + 246 kr. kommune</td><td>Arbejdsplads/stat/kommune</td><td>Produktion</td></tr>'
+    +'<tr><td>Mindre langtidssygefravær</td><td>1,24 færre uger (REC 0,87; p=.20)</td><td>2.218 kr. kommune + 1.146 kr. stat pr. uge</td><td>Kommune/stat</td><td>Produktion · trend</td></tr>'
+    +'<tr><td>Færre uger kontanthjælp</td><td>2,51 færre uger (REC 0,94; p=.48)</td><td>1.996 kr. kommune + 641 kr. stat pr. uge</td><td>Kommune/stat</td><td>Produktion · trend</td></tr>'
+    +'<tr><td>Højere arbejdsmarkedsindkomst</td><td>+5,21 % (p ≈ 0,10)</td><td>skat af indkomst</td><td>Kommune/stat/borger</td><td>Trend — ikke medregnet</td></tr>'
+    +'</tbody></table>'
+    +'<p class="ro-small ro-fnote">Trend-markerede poster (langtidssygefravær, kontanthjælp, indkomst; p > 0,05) indgår ikke i base case og kan vises parallelt eller udelades. Sygedagenes produktionsværdi pr. dag følger den valgte produktionsværdi i modellen. <strong>Kilder:</strong> SES ONE 12-måneders RCT og 5-års registeropfølgning (effektstørrelser); SØMs prisark v3.4 (enhedspriser, 2025-priser).</p>'
+    +'</div></details>');
+
+  H.push('<h3 class="ro-h3">4.C&nbsp;&nbsp;Fagpersoner — SES PRO</h3>');
+  H.push('<p class="ro-small">SES PRO (kompetenceløft af fagpersoner) værdisættes ikke i denne version. Når en model for fagpersoner er på plads, tilføjes et tredje skema her — fx kortere sagsforløb, færre fejlvisitationer og lavere personaleudskiftning — efter samme regnestykke-logik. <em>Afventer model.</em></p>');
+
+  // 5 Metode
+  sec('5','Metode og metodisk stillingtagen');
+  p('Rapporten anlægger en bevidst konservativ tilgang: den værdisætter kun de effekter, der kan knyttes til registrerbar ressourcebrug eller veletablerede enhedspriser, og behandler mere usikre gevinster som et adskilt, supplerende lag. Det betyder, at rapporten med stor sandsynlighed underestimerer den reelle samlede værdi af SES Family frem for at oppuste den.');
+  p('<strong>Anbefalet base case:</strong> offentligt budgetpotentiale (færre recepter og sundhedskontakter) kombineret med produktion og arbejdsmarked (færre sygedage). Disse poster er de mest robuste, fordi de hviler på enten danske registerdata eller publicerede enhedspriser fra SØM v3.4. Trivsels- og livskvalitetsgevinster kan lægges til som et borger-lag, men anbefales ikke blandet ind i den offentlige business case.');
+  p('<strong>Dobbelttælling holdes adskilt.</strong> De poster, der potentielt overlapper, er identificeret eksplicit: sygedage (år 1) og langtidssygefravær (5 år) måler begge tabt arbejdstid; langtidssygefravær og arbejdsmarkedsindkomst er overlappende indkomstkanaler; og 1-års sundhedskontakter (RCT) og 5-års recepter (register) afgrænses til hver sin kilde og periode, så samme krone ikke tælles to gange. Når produktionssporet er valgt, kan overlappet vises som en advarsel eller håndteres aktivt — ekskludér sekundære poster, vælg én primær post, eller anvend en haircut.');
+  p('<strong>Følsomhed.</strong> Skolefraværsværdien er sat til SØM-gennemsnittet (41.600 kr. netto pr. barn); for delgrupper med ADHD eller autisme er potentialet større (ca. 74.000 kr.) og kan vælges som et følsomhedsscenarie. Trend-effekter som arbejdsmarkedsindkomst (p≈0,10) er holdt ude af base case. Samlet placerer det de viste tal i den forsigtige ende af et plausibelt spænd.');
+  p('Effekterne er rangordnet efter dokumentationsstyrke:');
+  H.push('<table class="ro-table"><thead><tr><th>Evidensniveau</th><th>Effekter</th><th>Værdisætning</th></tr></thead><tbody>'
+    +'<tr><td><strong>1 · Registerdokumenteret</strong></td><td>Psykofarmaka-recepter (5-års register), langtidssygefravær</td><td>Stærkest — målte hændelser i nationale registre</td></tr>'
+    +'<tr><td><strong>2 · RCT + enhedspriser</strong></td><td>Skolefravær, sundhedskontakter, sygedage</td><td>Solid — RCT-effekt ganget med etableret enhedspris (SØM)</td></tr>'
+    +'<tr><td><strong>3 · Værdisat via antagelser</strong></td><td>Mental trivsel og livskvalitet (SDQ, HRQoL)</td><td>Mere usikker — WELLBY/QALY, placeres hos borger og holdes adskilt fra offentlige besparelser</td></tr>'
+    +'<tr><td><strong>Ikke værdisat</strong></td><td>Forældrekonflikt (mekanisme), arbejdsmarkedsindkomst (kun trend, p\u22480,10)</td><td>Udeladt bevidst</td></tr>'
+    +'</tbody></table>');
+  ul([
+    '<strong>Aktuelt valgte metoder i denne rapport:</strong> '+methodNames+'.',
+    '<strong>Enhedspriser:</strong> SØM v3.4 (Social- og Boligstyrelsen), 2025-priser.',
+    '<strong>Aktørfordeling:</strong> hver effekt fordeles på kommune, region, stat, arbejdsplads og familie/borger efter, hvem der bærer omkostningen eller høster gevinsten.',
+    '<strong>Overlap og dobbelttælling:</strong> '+adjNote,
+    '<strong>Statistisk usikkerhed:</strong> beskrevet i forskningen, men ikke regnet ind i tallene. RCT-effektstørrelser er ikke nødvendigvis direkte overførbare til fuld kommunal drift.',
+  ]);
+  small('Behov for NHG-vurdering: valget af base case, enhedspriser, aktørfordeling, håndtering af overlap samt overførbarheden fra RCT til kommunal skala (se afsnit 9).');
+
+  // 6 Økonomiske resultater
+  sec('6','Økonomiske resultater');
+  p('Resultaterne opgøres pr. voksen/forælder og pr. barn/ung samt fordelt på aktører. Alle beløb er den værdi, der kan afledes af de dokumenterede effekter — ikke et regnskab for omkostninger. Tallene er generiske og forudsætter ikke en bestemt kommune eller et bestemt brugertal.');
+  H.push('<table class="ro-kpi"><tbody>'
+    +'<tr><td>Værdi pr. voksen/forælder (udiskonteret)</td><td class="ro-kv">'+kr(ppF)+'</td></tr>'
+    +'<tr><td>Værdi pr. barn/ung (udiskonteret)</td><td class="ro-kv">'+kr(ppB)+'</td></tr>'
+    +'<tr><td>Nutidsværdi over 10 år pr. voksen (offentlig + produktion, 3,5 %)</td><td class="ro-kv">'+kr(npvF)+'</td></tr>'
+    +'<tr><td>Nutidsværdi over 10 år pr. barn (offentlig + produktion, 3,5 %)</td><td class="ro-kv">'+kr(npvB)+'</td></tr>'
+    +'</tbody></table>');
+  if(welfareOn&&(wAdult+wChild)>0) small('Heraf udgør velfærdsværdi (WELLBY/QALY) ca. '+kr(wAdult)+' pr. voksen og '+kr(wChild)+' pr. barn, som tilfalder familien/borgeren og holdes adskilt fra de offentlige besparelser.');
+  H.push(repCalcFold(P));
+  H.push('<h3 class="ro-h3">Hvor lander værdien?</h3>');
+  H.push(repPie(ppRows,ppTotal));
+  H.push('<h3 class="ro-h3">Fordeling pr. voksen/forælder</h3>');
+  H.push(repBars(adultRows,adultTotal));
+  H.push('<h3 class="ro-h3">Fordeling pr. barn/ung</h3>');
+  H.push(repBars(childRows,childTotal));
+  p('En stor del af den samlede værdi realiseres uden for kommunekassen. Effekter med høj samfundsværdi tilfalder ikke nødvendigvis kommunen direkte — det uddybes i afsnit 7.');
+  if(hasScenario){
+    H.push('<h3 class="ro-h3">Konkret scenarie for '+komNavn+'</h3>');
+    p('Anvendt på et planlægningsscenarie med ca. '+(P.nF||0).toLocaleString('da-DK')+' forældre og '+(P.nB||0).toLocaleString('da-DK')+' børn/unge om året:');
+    H.push('<table class="ro-kpi"><tbody>'
+      +'<tr><td>Samlet for '+komNavn+' (udiskonteret)</td><td class="ro-kv">'+krMio(A.total)+'</td></tr>'
+      +'<tr><td>Nutidsværdi over 10 år for kohorten (offentlig + produktion, 3,5 %)</td><td class="ro-kv">'+krMio(npv10)+'</td></tr>'
+      +'</tbody></table>');
+    H.push(repBars(A.rows,A.total));
+  }
+
+  // 7 Kommunens økonomi
+  sec('7','Kommunens økonomi');
+  p('Kommunen er ofte den primære beslutningstager, selvom hele værdiskabelsen ikke nødvendigvis lander i kommunekassen. Dette afsnit ser isoleret på den kommunale del.');
+  if(hasScenario){
+    ul([
+      'Værdi der tilfalder kommunen direkte: <strong>'+kr(kom)+'</strong> (ca. '+komPct+' % af den samlede værdi).',
+      'Værdi der tilfalder region og stat: <strong>'+kr(A.rows[1].val+A.rows[2].val)+'</strong>.',
+      'Effekter med størst kommunal relevans: skolefravær og børnenes trivsel, der berører PPR, skole og familieindsats.',
+      'Gevinster kommunen ikke kan bogføre direkte: familiens egen trivsel og livskvalitet samt dele af arbejdsmarkeds- og sundhedsgevinsten, der lander hos arbejdsplads, stat og region.',
+    ]);
+  } else {
+    ul([
+      'Af den samlede værdi tilfalder ca. <strong>'+komPpPct+' %</strong> kommunen, mens den samlede offentlige andel (kommune, region og stat) udgør ca. <strong>'+offPpPct+' %</strong>.',
+      'Effekter med størst kommunal relevans: skolefravær og børnenes trivsel, der berører PPR, skole og familieindsats.',
+      'Gevinster kommunen ikke kan bogføre direkte: familiens egen trivsel og livskvalitet samt dele af arbejdsmarkeds- og sundhedsgevinsten, der lander hos arbejdsplads, stat og region.',
+      'Konkrete kronebeløb for en bestemt kommune kan beregnes ved at angive kommune og forventede brugere i værktøjet.',
+    ]);
+  }
+  p('I en kommunal beslutningsproces kan resultaterne bruges til at vurdere både den direkte kommunale gevinst og kommunens bidrag til en bredere samfundsgevinst. NHG bør vurdere, om den kommunale andel er korrekt afgrænset.');
+
+  // 8 Fagpersoner / SES PRO
+  sec('8','Fagpersoner og SES PRO');
+  p('Fagpersonernes brug af SES Family og værktøjet SES PRO kan skabe værdi gennem fælles fagligt materiale, bedre systematik, mindre behov for lokal udvikling af egne redskaber, støtte til samtaler og gruppeforløb samt større lokal kapacitet og kvalitet.');
+  p('<strong>Denne værdi er bevidst holdt uden for den forskningsbaserede effektkerne ovenfor.</strong> Hvis den skal beregnes, bør den opgøres som et særskilt modul og må ikke blandes sammen med de dokumenterede effekter af SES ONE og SES NXT. I dette udkast er fagpersonværdien derfor ikke værdisat.');
+
+  // 9 NHG's rolle
+  sec('9','NHG\u2019s rolle og punkter til review');
+  p('Dette udkast er et arbejdsgrundlag, ikke en færdig rapport. NHG\u2019s opgave er ikke at pynte dokumentet, men at bruge det som afsæt for et fagligt review og en endelig impactrapport, de kan stå inde for. NHG bedes konkret tage stilling til:');
+  ul(REPORT_NHG);
+
+  // 10 Antagelseslog
+  sec('10','Antagelseslog');
+  p('De væsentligste valg og antagelser bag rapportens tal:');
+  const log=[
+    ['Rapporttype', hasScenario?'kommunespecifik (med scenarie)':'generisk — resultater opgjort pr. person'],
+    ['Kommune', hasKom?P.kommune:'ingen bestemt kommune (generisk)'],
+    ['Forventede brugere', hasUsers?((P.nF||0).toLocaleString('da-DK')+' forældre / '+(P.nB||0).toLocaleString('da-DK')+' børn pr. år (planlægningsscenarie)'):'ikke angivet (generisk rapport)'],
+    ['Valgte metoder', methodNames],
+    ['Aktørfordeling', 'samfundsperspektiv — alle aktører medregnet'],
+    ['Skolefraværsværdi', kr(P.schoolValue)+' pr. barn ud af bekymrende fravær (10 år, SØM)'],
+    ['Diskontering', 'nutidsværdi beregnet ved '+(P.discount*100).toLocaleString('da-DK')+' % pr. år'],
+    ['Overlap/dobbelttælling', adjNote],
+    ['Velfærdsværdi (WELLBY/QALY)', welfareOn?'medtaget, placeret hos familie/borger':'ikke medtaget'],
+    ['Prisgrundlag', 'SØM v3.4 (Social- og Boligstyrelsen), 2025-priser, og de publicerede SES-effektstudier'],
+    ['Udeladt', 'licens- og udbredelsesudgifter samt ROI — uden for denne rapports formål'],
+  ];
+  H.push('<table class="ro-table ro-log"><tbody>'+log.map(r=>'<tr><th>'+r[0]+'</th><td>'+r[1]+'</td></tr>').join('')+'</tbody></table>');
+
+  // Konklusion
+  H.push('<h2 class="ro-h2"><span class="ro-num">11</span>Konklusion</h2>');
+  if(hasScenario){
+    p('På baggrund af de dokumenterede effekter af SES Family kan der for '+komNavn+' afledes en samlet økonomisk og samfundsmæssig værdi i størrelsesordenen <strong>'+krMio(A.total)+'</strong> (udiskonteret) ud fra de valgte metoder. Værdien er bredt fordelt, og en mindre del end den samlede gevinst tilfalder kommunen direkte.');
+  } else {
+    p('På baggrund af de dokumenterede effekter af SES Family kan der ud fra de valgte metoder afledes en værdi i størrelsesordenen <strong>'+kr(ppF)+'</strong> pr. voksen og <strong>'+kr(ppB)+'</strong> pr. barn/ung. Værdien er bredt fordelt på tværs af aktører, og en mindre del end den samlede gevinst tilfalder kommunen direkte.');
+  }
+  p('Resultaterne er behæftet med de forbehold, der fremgår af metodeafsnittet og af afsnit 9 — herunder at effektstørrelser stammer fra RCT\u2019er og registerdata, der ikke uden videre kan overføres til fuld kommunal drift. Dokumentet bør derfor kvalitetssikres og videreudvikles fagligt, før det indgår i ekstern beslutningsdialog.');
+
+  H.push('<p class="ro-foot">Modelgenereret udkast · '+dato+' · bygget på SØM v3.4 (Social- og Boligstyrelsen, 2025-priser) og de publicerede SES-effektstudier. Tallene er beslutningsstøtte, ikke en garanti, og afhænger af de valgte antagelser. Til fagligt review.</p>');
+
+  return H.join('\n');
+}
+
+function openReport(){
+  const valueMethod=P.sel.budget||P.sel.produktion||P.sel.wellby||P.sel.qaly;
+  const msg=$('reportHint');
+  if(!valueMethod){ if(msg){msg.textContent='Vælg mindst én beregningsmetode ovenfor, før du genererer rapporten.';msg.style.display='';} const rp=$('reportPanel'); if(rp&&rp.scrollIntoView) rp.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  if(msg) msg.style.display='none';
+  $('reportBody').innerHTML=reportHTML(P);
+  const ov=$('reportOverlay'); ov.style.display='block'; ov.scrollTop=0; document.body.style.overflow='hidden';
+  const fab=$('reportFab'); if(fab) fab.style.display='none';
+}
+function closeReport(){ $('reportOverlay').style.display='none'; document.body.style.overflow=''; const fab=$('reportFab'); if(fab) fab.style.display=''; }
+function copyReport(){
+  const txt=$('reportBody').innerText;
+  const done=()=>{const b=$('roCopy'); if(b){const t=b.textContent; b.textContent='Kopieret \u2713'; setTimeout(()=>b.textContent=t,1600);} };
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done,()=>fallbackCopy(txt,done)); }
+  else fallbackCopy(txt,done);
+}
+function fallbackCopy(txt,done){ const ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');done&&done();}catch(e){} document.body.removeChild(ta); }
+
+
+$('genReport').addEventListener('click',openReport);
+$('reportFab').addEventListener('click',openReport);
+$('roCopy').addEventListener('click',copyReport);
+$('roPrint').addEventListener('click',()=>window.print());
+$('roClose').addEventListener('click',closeReport);
+const METHOD_PRESETS={base:{budget:true,produktion:true,wellby:false,qaly:false},budget:{budget:true,produktion:false,wellby:false,qaly:false},welfare:{budget:true,produktion:true,wellby:true,qaly:false},clear:{budget:false,produktion:false,wellby:false,qaly:false}};
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{Object.assign(P.sel,METHOD_PRESETS[b.getAttribute('data-preset')]);render();}));
 
 syncInputs(); render();
 </script>
